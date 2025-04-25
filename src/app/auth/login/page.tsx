@@ -54,6 +54,13 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+        
+        <a
+          href="/auth/forgot-password"
+          style={{ display: "block", marginTop: "5px", color: "blue", textDecoration: "underline" }}
+        >
+          Forget Password?
+        </a>
         <input
           type="password"
           placeholder="Password"
@@ -66,6 +73,15 @@ export default function Login() {
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
+      <p style={{ marginTop: "10px" }}>
+        Don&apos;t have an account?{" "}
+        <a
+          href="/auth/signup"
+          style={{ color: "blue", textDecoration: "underline" }}
+        >
+          Signup
+        </a>
+      </p>
     </div>
   )
 }
