@@ -13,6 +13,15 @@ declare module "next-auth" {
   interface JWT {
     role?: string;
   }
+
+  interface Session {
+    user?: {
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      role?: string; // Add role to the session user
+    };
+  }
 }
 
 export const authOptions: AuthOptions = {
@@ -42,7 +51,7 @@ export const authOptions: AuthOptions = {
         if (!user.emailVerified) {
           throw new Error("Please verify your email before logging in.");
         }
-        
+
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
 
@@ -62,6 +71,14 @@ export const authOptions: AuthOptions = {
         token.role = user.role;
       }
       return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        if (session.user) {
+          session.user.role = token.role as string | undefined; // Add the role to the session
+        }
+      }
+      return session;
     },
   },
   pages: {

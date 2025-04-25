@@ -24,8 +24,20 @@ export default function Login() {
     if (res?.error) {
       setError(res.error)
     } else {
-      // Redirect to a dashboard or homepage upon successful login
-      router.push("../../../pages/dashboard/user") // You can change this to the relevant page
+      // Fetch the session to get the user's role
+      const session = await fetch("../../../api/auth/session").then((res) => res.json());
+
+      console.log("Session data:", session);
+      // Redirect based on the user's role
+      if (session?.user?.role === "ADMIN") {
+        router.push("../../../pages/dashboard/admin");
+      } else if (session?.user?.role === "PHOTOGRAPHER") {
+        router.push("../../../pages/dashboard/photographer");
+      } else if (session?.user?.role === "CLIENT") {
+        router.push("../../../pages/dashboard/client");
+      } else {
+        setError("Invalid role. Please contact support.");
+      }
     }
 
     setLoading(false)
