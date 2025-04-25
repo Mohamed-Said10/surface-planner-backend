@@ -34,10 +34,18 @@ export const authOptions: AuthOptions = {
           where: { email: credentials.email },
         });
 
-        if (!user || !user.password) return null;
-
+        if (!user || !user.password) {
+          throw new Error("Wrong Email or password.");
+        }
+        
+        // Check if the email is verified
+        if (!user.emailVerified) {
+          throw new Error("Please verify your email before logging in.");
+        }
+        
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
+
 
         return {
           id: user.id,

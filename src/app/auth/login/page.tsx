@@ -22,7 +22,7 @@ export default function Login() {
     })
 
     if (res?.error) {
-      setError("Invalid email or password")
+      setError(res.error)
     } else {
       // Redirect to a dashboard or homepage upon successful login
       router.push("../../../pages/dashboard/user") // You can change this to the relevant page
