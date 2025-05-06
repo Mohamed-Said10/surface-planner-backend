@@ -111,6 +111,7 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   firstname: 'firstname',
   lastname: 'lastname',
+  phoneNumber: 'phoneNumber',
   role: 'role',
   emailVerified: 'emailVerified',
   image: 'image',
@@ -137,6 +138,50 @@ exports.Prisma.VerificationTokenScalarFieldEnum = {
   expires: 'expires'
 };
 
+exports.Prisma.BookingScalarFieldEnum = {
+  id: 'id',
+  selectedPackageId: 'selectedPackageId',
+  propertyAddressId: 'propertyAddressId',
+  isLoading: 'isLoading',
+  propertyType: 'propertyType',
+  propertySize: 'propertySize',
+  date: 'date',
+  timeSlot: 'timeSlot',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  phoneNumber: 'phoneNumber',
+  email: 'email',
+  additionalInfo: 'additionalInfo',
+  additionalRequests: 'additionalRequests',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.SelectedPackageScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  description: 'description',
+  features: 'features',
+  pricePerExtra: 'pricePerExtra'
+};
+
+exports.Prisma.PropertyAddressScalarFieldEnum = {
+  id: 'id',
+  buildingName: 'buildingName',
+  unitNumber: 'unitNumber',
+  floor: 'floor',
+  street: 'street'
+};
+
+exports.Prisma.AddOnScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -157,10 +202,22 @@ exports.Role = {
   ADMIN: 'ADMIN'
 };
 
+exports.BookingStatus = {
+  CREATED: 'CREATED',
+  PHOTOGRAPHER_ASSIGNED: 'PHOTOGRAPHER_ASSIGNED',
+  SHOOTING: 'SHOOTING',
+  EDITING: 'EDITING',
+  COMPLETED: 'COMPLETED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Account: 'Account',
-  VerificationToken: 'VerificationToken'
+  VerificationToken: 'VerificationToken',
+  Booking: 'Booking',
+  SelectedPackage: 'SelectedPackage',
+  PropertyAddress: 'PropertyAddress',
+  AddOn: 'AddOn'
 };
 
 /**

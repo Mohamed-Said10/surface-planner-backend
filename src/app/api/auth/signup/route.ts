@@ -1,38 +1,42 @@
-// src/app/api/auth/signup/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { prisma } from "../../../../lib/prisma"; // Adjust the import path as necessary
+import { prisma } from "../../../../lib/prisma";
 import nodemailer from "nodemailer";
-import crypto from "crypto"; 
+import crypto from "crypto";
 
-export async function POST(req: Request) {
+// Define CORS headers once for reuse
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "http://localhost:3001",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function POST(req: NextRequest) {
   try {
     const { email, password, firstname, lastname } = await req.json();
 
-    // Check if all fields are provided
+    // Validate input
     if (!email || !password || !firstname || !lastname) {
       return NextResponse.json(
         { error: "Missing required fields: email, password, firstname, lastname" },
-        { status: 400 }
+        { status: 400, headers: CORS_HEADERS }
       );
     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return NextResponse.json({ error: "User already exists" }, { status: 400 });
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 409, headers: CORS_HEADERS }
+      );
     }
 
-    // Hash password
+    // Hash password and generate token
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Generate a verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
-    // Create new user in the database with `emailVerified` set to null
+    // Create user
     await prisma.user.create({
       data: {
         email,
@@ -45,34 +49,44 @@ export async function POST(req: Request) {
       },
     });
 
-    // Configure nodemailer with Gmail SMTP
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.EMAIL_USER, // Your Gmail address
-        pass: process.env.EMAIL_PASS, // Your Gmail app password
-      },
-    });
+    // Send verification email
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      const transporter = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
 
-    // Generate the verification URL
-    const verificationUrl = `${process.env.BASE_URL}/auth/verify?token=${verificationToken}`;
+      const verificationUrl = `${process.env.BASE_URL}/auth/verify?token=${verificationToken}`;
+      
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Verify your email",
+        html: `<p>Hi ${firstname},</p>
+               <p>Thank you for signing up. Please verify your email by clicking the link below:</p>
+               <a href="${verificationUrl}">Verify Email</a>
+               <p>If you did not sign up, please ignore this email.</p>`,
+      });
+    }
 
-    // Send the verification email
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Verify your email",
-      html: `<p>Hi ${firstname},</p>
-             <p>Thank you for signing up. Please verify your email by clicking the link below:</p>
-             <a href="${verificationUrl}">Verify Email</a>
-             <p>If you did not sign up, please ignore this email.</p>`,
-    });
+    return NextResponse.json(
+      { message: "User created successfully. Please check your email to verify." },
+      { headers: CORS_HEADERS }
+    );
 
-    return NextResponse.json({
-      message: "User created successfully. Please check your email to verify your account.",
-    });
-  } catch (error: unknown) {
-    console.error("Error during signup:", error);
-    return NextResponse.json({ error: "Server error. Please try again later." }, { status: 500 });
+  } catch (error) {
+    console.error("Signup error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500, headers: CORS_HEADERS }
+    );
   }
+}
+
+// Preflight OPTIONS handler
+export async function OPTIONS() {
+  return new NextResponse(null, { headers: CORS_HEADERS });
 }

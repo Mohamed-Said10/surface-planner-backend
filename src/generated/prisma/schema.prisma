@@ -15,16 +15,18 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  email          String   @unique
-  password       String   
-  firstname      String
-  lastname       String
-  role           Role
-  emailVerified  DateTime? 
-  image          String?
-  accounts       Account[]
+  id                String    @id @default(uuid())
+  email             String    @unique
+  password          String
+  firstname         String
+  lastname          String
+  phoneNumber       String?
+  role              Role
+  emailVerified     DateTime?
+  image             String?
+  accounts          Account[]
   verificationToken String?
+  bookings          Booking[] @relation("UserBookings")
 }
 
 model Account {
@@ -45,7 +47,6 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -58,4 +59,64 @@ enum Role {
   CLIENT
   PHOTOGRAPHER
   ADMIN
+}
+
+model Booking {
+  id                Int              @id @default(autoincrement())
+  selectedPackage   SelectedPackage? @relation(fields: [selectedPackageId], references: [id])
+  selectedPackageId Int?
+  propertyAddress   PropertyAddress? @relation(fields: [propertyAddressId], references: [id])
+  propertyAddressId Int?
+  addOns            AddOn[]          @relation("BookingAddOns")
+  isLoading         Boolean
+  propertyType      String
+  propertySize      String
+  date              DateTime
+  timeSlot          String
+  firstName         String
+  lastName          String
+  phoneNumber       String
+  email             String
+  additionalInfo    String?          // Already exists
+  additionalRequests String?         // Newly added field
+  status            BookingStatus    @default(CREATED) // Add the status field
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], name: "UserBookings")
+}
+
+model SelectedPackage {
+  id            Int       @id @default(autoincrement())
+  name          String
+  price         Float
+  description   String
+  features      String // Comma-separated list of features
+  pricePerExtra Float
+  bookings      Booking[] // Relation to Booking
+}
+
+model PropertyAddress {
+  id           Int       @id @default(autoincrement())
+  buildingName String
+  unitNumber   String
+  floor        String
+  street       String
+  bookings     Booking[] // Relation to Booking
+}
+
+model AddOn {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  price    Float
+  bookings Booking[] @relation("BookingAddOns")
+}
+
+enum BookingStatus {
+  CREATED
+  PHOTOGRAPHER_ASSIGNED
+  SHOOTING
+  EDITING
+  COMPLETED
 }
