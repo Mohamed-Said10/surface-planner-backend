@@ -11,14 +11,19 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.9.0",
+    "@radix-ui/react-slot": "^1.2.2",
     "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "cors": "^2.8.5",
+    "lucide-react": "^0.507.0",
     "next": "15.3.1",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
