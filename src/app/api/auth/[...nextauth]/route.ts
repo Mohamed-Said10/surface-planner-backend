@@ -3,6 +3,17 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcrypt";
 import { prisma } from "../../../../lib/prisma";  // Import prisma from lib
+import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
+
+// CORS middleware
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "http://localhost:3001",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Credentials": "true", // This is crucial!
+};
+
 
 // Declare Prisma Client only once per request.
 declare module "next-auth" {
@@ -41,7 +52,9 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        try {
+          
+          if (!credentials?.email || !credentials?.password) {
           console.error("Missing email or password");
           return null;
         }
@@ -76,6 +89,10 @@ export const authOptions: AuthOptions = {
           lastname: user.lastname,   // Include lastName
           //phoneNumber: user.phoneNumber, // Include phoneNumber
         };
+      } catch (err) {
+        console.error("Authorize error:", err);
+        throw new Error("Authentication failed."); // Will still redirect unless handled with `redirect: false`
+      }
       },
     }),
   ],
@@ -111,8 +128,46 @@ export const authOptions: AuthOptions = {
     signIn: "/login",  // Optional: custom login page
   },
   secret: process.env.NEXTAUTH_SECRET,
+  cookies: {
+    sessionToken: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-next-auth.session-token"
+          : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },  
 };
 
-const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };  // for App Router
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  // Handle OPTIONS request for CORS preflight
+  if (req.method === "OPTIONS") {
+    return new NextResponse(null, {
+      status: 200,
+      headers: corsHeaders,
+    });
+  }
+
+  // Get the NextAuth response
+  const nextAuthResponse = await NextAuth(req, res, authOptions);
+
+  // Add CORS headers to all responses
+  if (nextAuthResponse instanceof Response) {
+    for (const [key, value] of Object.entries(corsHeaders)) {
+      nextAuthResponse.headers.set(key, value);
+    }
+  }
+
+  return nextAuthResponse;
+}
+
+export { handler as GET, handler as POST, handler as OPTIONS };
