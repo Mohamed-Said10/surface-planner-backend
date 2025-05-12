@@ -91,7 +91,11 @@ export const authOptions: AuthOptions = {
         };
       } catch (err) {
         console.error("Authorize error:", err);
-        throw new Error("Authentication failed."); // Will still redirect unless handled with `redirect: false`
+        // Forward the exact error message to the client
+        if (err instanceof Error) {
+          throw err; // This will preserve our custom error message
+        }
+        throw new Error("Authentication failed");
       }
       },
     }),

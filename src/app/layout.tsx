@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist as GeistSans, Geist_Mono as GeistMono } from "next/font/google";
+
+const geistSans = GeistSans({ subsets: ["latin"], variable: "--font-geist-sans" });
+const geistMono = GeistMono({ subsets: ["latin"], variable: "--font-geist-mono" });
 import SessionProviderWrapper from "../../src/app/sessionproviderwrapper"; // Import the wrapper
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
