@@ -1,5 +1,0 @@
--- CreateEnum
-CREATE TYPE "BookingStatus" AS ENUM ('CREATED', 'PHOTOGRAPHER_ASSIGNED', 'SHOOTING', 'EDITING', 'COMPLETED');
-
--- AlterTable
-ALTER TABLE "Booking" ADD COLUMN     "status" "BookingStatus" NOT NULL DEFAULT 'CREATED';
