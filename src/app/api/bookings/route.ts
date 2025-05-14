@@ -14,9 +14,10 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-
     // Parse request body
     const body = await req.json();
+    console.log(req.body,"request body")
+
     const {
       selectedPackage,
       propertyType,
@@ -86,40 +87,58 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Create booking in database
-    const booking = await prisma.booking.create({
-      data: {
-        clientId: user.id,
-        packageId: selectedPackage.id,
-        propertyType,
-        propertySize,
-        buildingName,
-        unitNumber,
-        floor,
-        street,
-        appointmentDate: new Date(date),
-        timeSlot,
-        firstName,
-        lastName,
-        phoneNumber,
-        email,
-        status: "BOOKING_CREATED",
-        addOns: {
-          create: addOns.map((addon: any) => ({
-            addonId: addon.id,
-            name: addon.name,
-            price: addon.price,
-          })) || [],
+    // Create booking and initial status history in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create booking in database
+      const booking = await tx.booking.create({
+        data: {
+          clientId: user.id,
+          packageId: selectedPackage.id,
+          propertyType,
+          propertySize,
+          buildingName,
+          unitNumber,
+          floor,
+          street,
+          appointmentDate: new Date(date),
+          timeSlot,
+          firstName,
+          lastName,
+          phoneNumber,
+          email,
+          status: "BOOKING_CREATED",
+          addOns: {
+            create: addOns?.map((addon: any) => ({
+              addonId: addon.id,
+              name: addon.name,
+              price: addon.price,
+            })) || [],
+          },
         },
-      },
-      include: {
-        addOns: true,
-        package: true,
-      },
+        include: {
+          addOns: true,
+          package: true,
+        },
+      });
+
+      // Create initial status history entry
+      const statusHistory = await tx.bookingStatusHistory.create({
+        data: {
+          bookingId: booking.id,
+          userId: user.id,
+          status: "BOOKING_CREATED",
+        }
+      });
+
+      return { booking, statusHistory };
     });
 
     return NextResponse.json(
-      { message: "Booking created successfully", booking },
+      { 
+        message: "Booking created successfully", 
+        booking: result.booking,
+        statusHistoryId: result.statusHistory.id 
+      },
       { status: 201 }
     );
   } catch (error: any) {
@@ -165,14 +184,25 @@ export async function GET(req: NextRequest) {
       // Clients can only see their own bookings
       whereClause.clientId = user.id;
     } else if (user.role === "PHOTOGRAPHER") {
-      // Photographers can only see bookings assigned to them
-      whereClause.photographerId = user.id;
+      // Photographers can see bookings assigned to them AND unassigned bookings with BOOKING_CREATED status
+      whereClause.OR = [
+        { photographerId: user.id },
+        { photographerId: null, status: "BOOKING_CREATED" } // Unassigned bookings
+      ];
     }
     // Admins can see all bookings
 
     // Add status filter if provided
     if (status) {
-      whereClause.status = status;
+      // If we already have an OR condition, we need to handle this differently
+      if (whereClause.OR) {
+        whereClause.OR = whereClause.OR.map((condition: any) => ({
+          ...condition,
+          status: status
+        }));
+      } else {
+        whereClause.status = status;
+      }
     }
 
     // Get bookings with pagination
@@ -182,6 +212,20 @@ export async function GET(req: NextRequest) {
         include: {
           addOns: true,
           package: true,
+          statusHistories: {
+            orderBy: { createdAt: 'desc' },
+            take: 5, // Get the last 5 status changes
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstname: true,
+                  lastname: true,
+                  role: true
+                }
+              }
+            }
+          },
           client: {
             select: {
               id: true,
