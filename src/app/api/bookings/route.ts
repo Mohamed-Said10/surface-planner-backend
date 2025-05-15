@@ -4,6 +4,26 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+// Define CORS headers
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "http://localhost:3001", // must match frontend origin
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Credentials": "true", // <== also VERY IMPORTANT
+};
+
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      ...corsHeaders,
+      "Access-Control-Allow-Origin": "http://localhost:3001", // your frontend
+      "Access-Control-Allow-Credentials": "true",
+    }    
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     // Check authentication
@@ -11,7 +31,10 @@ export async function POST(req: NextRequest) {
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
-        { status: 401 }
+        { 
+          status: 401,
+          headers: corsHeaders
+        }
       );
     }
     // Parse request body
@@ -53,7 +76,10 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: corsHeaders
+        }
       );
     }
 
@@ -64,7 +90,13 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { 
+          status: 404,
+          headers: corsHeaders
+        }
+      );
     }
 
 
@@ -127,7 +159,10 @@ export async function POST(req: NextRequest) {
     console.error("Error creating booking:", error);
     return NextResponse.json(
       { error: "Failed to create booking", details: error.message },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: corsHeaders
+      }
     );
   }
 }
@@ -139,7 +174,10 @@ export async function GET(req: NextRequest) {
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
-        { status: 401 }
+        { 
+          status: 401,
+          headers: corsHeaders
+        }
       );
     }
 
@@ -149,7 +187,13 @@ export async function GET(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { 
+          status: 404,
+          headers: corsHeaders
+        }
+      );
     }
 
     // Get query parameters
@@ -163,7 +207,6 @@ export async function GET(req: NextRequest) {
     const whereClause: any = {};
 
     if (user.role === "CLIENT") {
-      // Clients can only see their own bookings
       whereClause.clientId = user.id;
     } else if (user.role === "PHOTOGRAPHER") {
       // Photographers can see bookings assigned to them AND unassigned bookings with BOOKING_CREATED status
@@ -172,9 +215,7 @@ export async function GET(req: NextRequest) {
         { photographerId: null, status: "BOOKING_CREATED" } // Unassigned bookings
       ];
     }
-    // Admins can see all bookings
 
-    // Add status filter if provided
     if (status) {
       // If we already have an OR condition, we need to handle this differently
       if (whereClause.OR) {
@@ -234,20 +275,28 @@ export async function GET(req: NextRequest) {
       prisma.booking.count({ where: whereClause }),
     ]);
 
-    return NextResponse.json({
-      bookings,
-      pagination: {
-        total: totalCount,
-        page,
-        limit,
-        pages: Math.ceil(totalCount / limit),
+    return NextResponse.json(
+      {
+        bookings,
+        pagination: {
+          total: totalCount,
+          page,
+          limit,
+          pages: Math.ceil(totalCount / limit),
+        },
       },
-    });
+      { 
+        headers: corsHeaders
+      }
+    );
   } catch (error: any) {
     console.error("Error fetching bookings:", error);
     return NextResponse.json(
       { error: "Failed to fetch bookings", details: error.message },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: corsHeaders
+      }
     );
   }
 }

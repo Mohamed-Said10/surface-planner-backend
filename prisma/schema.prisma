@@ -17,6 +17,12 @@ model User {
   role            Role
   emailVerified   DateTime?
   image           String?
+  dateOfBirth     DateTime?
+  address         String?
+  city            String?
+  state           String?
+  zipcode         String?
+  phoneNumber     String?
   accounts        Account[]
   verificationToken String?
   bookings        Booking[] @relation("ClientBookings")      // Bookings created by this user

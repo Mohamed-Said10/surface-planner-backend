@@ -9,6 +9,8 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+
+  
   try {
     // Check authentication
     const session = await getServerSession(authOptions);

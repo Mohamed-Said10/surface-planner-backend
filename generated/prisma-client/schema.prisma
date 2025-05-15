@@ -1,6 +1,11 @@
 generator client {
   provider = "prisma-client-js"
+<<<<<<< HEAD
    output   = "../generated/prisma-client"
+=======
+  output = "../generated/prisma-client"
+
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 }
 
 datasource db {
@@ -17,12 +22,24 @@ model User {
   role            Role
   emailVerified   DateTime?
   image           String?
+<<<<<<< HEAD
+=======
+  dateOfBirth     DateTime?
+  address         String?
+  city            String?
+  state           String?
+  zipcode         String?
+  phoneNumber     String?
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   accounts        Account[]
   verificationToken String?
   bookings        Booking[] @relation("ClientBookings")      // Bookings created by this user
   assignedBookings Booking[] @relation("PhotographerBookings") // Bookings assigned to this user (if photographer)
+<<<<<<< HEAD
   payments        Payment[] // Payments made by this user
   bookingStatusHistories BookingStatusHistory[] // Status changes made by this user
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 }
 
 model Account {
@@ -80,9 +97,12 @@ model Booking {
   // Booking details
   status           BookingStatus   @default(BOOKING_CREATED)
   
+<<<<<<< HEAD
   // BookingStatusHistory relation
   statusHistories  BookingStatusHistory[]
   
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   // Package details
   packageId        Int
   package          Package         @relation(fields: [packageId], references: [id])
@@ -108,6 +128,7 @@ model Booking {
   // Add-ons
   addOns           AddOn[]
   
+<<<<<<< HEAD
   additionalDirections String?
   additionalRequests String?
 
@@ -137,6 +158,10 @@ model BookingStatusHistory {
   // Timestamps
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+=======
+  // Additional notes
+  notes            String?
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 }
 
 model AddOn {
@@ -148,6 +173,7 @@ model AddOn {
   price           Float
 }
 
+<<<<<<< HEAD
 model Payment {
   id              String   @id @default(uuid())
   createdAt       DateTime @default(now())
@@ -174,6 +200,8 @@ enum PaymentStatus {
   REFUNDED
 }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 enum BookingStatus {
   BOOKING_CREATED
   PHOTOGRAPHER_ASSIGNED

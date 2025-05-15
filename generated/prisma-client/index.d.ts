@@ -18,8 +18,11 @@ export type UserPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultAr
     accounts: AccountPayload<ExtArgs>[]
     bookings: BookingPayload<ExtArgs>[]
     assignedBookings: BookingPayload<ExtArgs>[]
+<<<<<<< HEAD
     payments: PaymentPayload<ExtArgs>[]
     bookingStatusHistories: BookingStatusHistoryPayload<ExtArgs>[]
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
   scalars: $Extensions.GetResult<{
     id: string
@@ -30,6 +33,12 @@ export type UserPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultAr
     role: Role
     emailVerified: Date | null
     image: string | null
+    dateOfBirth: Date | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zipcode: string | null
+    phoneNumber: string | null
     verificationToken: string | null
   }, ExtArgs["result"]["user"]>
   composites: {}
@@ -108,10 +117,15 @@ export type BookingPayload<ExtArgs extends $Extensions.Args = $Extensions.Defaul
   objects: {
     client: UserPayload<ExtArgs>
     photographer: UserPayload<ExtArgs> | null
+<<<<<<< HEAD
     statusHistories: BookingStatusHistoryPayload<ExtArgs>[]
     package: PackagePayload<ExtArgs>
     addOns: AddOnPayload<ExtArgs>[]
     payments: PaymentPayload<ExtArgs>[]
+=======
+    package: PackagePayload<ExtArgs>
+    addOns: AddOnPayload<ExtArgs>[]
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
   scalars: $Extensions.GetResult<{
     id: string
@@ -133,9 +147,13 @@ export type BookingPayload<ExtArgs extends $Extensions.Args = $Extensions.Defaul
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections: string | null
     additionalRequests: string | null
     isPaid: boolean
+=======
+    notes: string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }, ExtArgs["result"]["booking"]>
   composites: {}
 }
@@ -145,6 +163,7 @@ export type BookingPayload<ExtArgs extends $Extensions.Args = $Extensions.Defaul
  * 
  */
 export type Booking = runtime.Types.DefaultSelection<BookingPayload>
+<<<<<<< HEAD
 export type BookingStatusHistoryPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
   name: "BookingStatusHistory"
   objects: {
@@ -168,6 +187,8 @@ export type BookingStatusHistoryPayload<ExtArgs extends $Extensions.Args = $Exte
  * 
  */
 export type BookingStatusHistory = runtime.Types.DefaultSelection<BookingStatusHistoryPayload>
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 export type AddOnPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
   name: "AddOn"
   objects: {
@@ -423,6 +444,7 @@ export class PrismaClient<
   get booking(): Prisma.BookingDelegate<GlobalReject, ExtArgs>;
 
   /**
+<<<<<<< HEAD
    * `prisma.bookingStatusHistory`: Exposes CRUD operations for the **BookingStatusHistory** model.
     * Example usage:
     * ```ts
@@ -433,6 +455,8 @@ export class PrismaClient<
   get bookingStatusHistory(): Prisma.BookingStatusHistoryDelegate<GlobalReject, ExtArgs>;
 
   /**
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
    * `prisma.addOn`: Exposes CRUD operations for the **AddOn** model.
     * Example usage:
     * ```ts
@@ -939,9 +963,13 @@ export namespace Prisma {
     VerificationToken: 'VerificationToken',
     Package: 'Package',
     Booking: 'Booking',
+<<<<<<< HEAD
     BookingStatusHistory: 'BookingStatusHistory',
     AddOn: 'AddOn',
     Payment: 'Payment'
+=======
+    AddOn: 'AddOn'
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -958,7 +986,11 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     meta: {
+<<<<<<< HEAD
       modelProps: 'user' | 'account' | 'verificationToken' | 'package' | 'booking' | 'bookingStatusHistory' | 'addOn' | 'payment'
+=======
+      modelProps: 'user' | 'account' | 'verificationToken' | 'package' | 'booking' | 'addOn'
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
       txIsolationLevel: Prisma.TransactionIsolationLevel
     },
     model: {
@@ -1287,6 +1319,7 @@ export namespace Prisma {
           }
         }
       }
+<<<<<<< HEAD
       BookingStatusHistory: {
         payload: BookingStatusHistoryPayload<ExtArgs>
         operations: {
@@ -1352,6 +1385,8 @@ export namespace Prisma {
           }
         }
       }
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
       AddOn: {
         payload: AddOnPayload<ExtArgs>
         operations: {
@@ -1667,16 +1702,22 @@ export namespace Prisma {
     accounts: number
     bookings: number
     assignedBookings: number
+<<<<<<< HEAD
     payments: number
     bookingStatusHistories: number
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     bookings?: boolean | UserCountOutputTypeCountBookingsArgs
     assignedBookings?: boolean | UserCountOutputTypeCountAssignedBookingsArgs
+<<<<<<< HEAD
     payments?: boolean | UserCountOutputTypeCountPaymentsArgs
     bookingStatusHistories?: boolean | UserCountOutputTypeCountBookingStatusHistoriesArgs
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   // Custom InputTypes
@@ -1716,6 +1757,7 @@ export namespace Prisma {
   }
 
 
+<<<<<<< HEAD
   /**
    * UserCountOutputType without action
    */
@@ -1732,6 +1774,8 @@ export namespace Prisma {
   }
 
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 
   /**
    * Count Type PackageCountOutputType
@@ -1815,6 +1859,7 @@ export namespace Prisma {
 
 
   /**
+<<<<<<< HEAD
    * BookingCountOutputType without action
    */
   export type BookingCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
@@ -1824,6 +1869,8 @@ export namespace Prisma {
 
 
   /**
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
    * Models
    */
 
@@ -1847,6 +1894,12 @@ export namespace Prisma {
     role: Role | null
     emailVerified: Date | null
     image: string | null
+    dateOfBirth: Date | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zipcode: string | null
+    phoneNumber: string | null
     verificationToken: string | null
   }
 
@@ -1859,6 +1912,12 @@ export namespace Prisma {
     role: Role | null
     emailVerified: Date | null
     image: string | null
+    dateOfBirth: Date | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zipcode: string | null
+    phoneNumber: string | null
     verificationToken: string | null
   }
 
@@ -1871,6 +1930,12 @@ export namespace Prisma {
     role: number
     emailVerified: number
     image: number
+    dateOfBirth: number
+    address: number
+    city: number
+    state: number
+    zipcode: number
+    phoneNumber: number
     verificationToken: number
     _all: number
   }
@@ -1885,6 +1950,12 @@ export namespace Prisma {
     role?: true
     emailVerified?: true
     image?: true
+    dateOfBirth?: true
+    address?: true
+    city?: true
+    state?: true
+    zipcode?: true
+    phoneNumber?: true
     verificationToken?: true
   }
 
@@ -1897,6 +1968,12 @@ export namespace Prisma {
     role?: true
     emailVerified?: true
     image?: true
+    dateOfBirth?: true
+    address?: true
+    city?: true
+    state?: true
+    zipcode?: true
+    phoneNumber?: true
     verificationToken?: true
   }
 
@@ -1909,6 +1986,12 @@ export namespace Prisma {
     role?: true
     emailVerified?: true
     image?: true
+    dateOfBirth?: true
+    address?: true
+    city?: true
+    state?: true
+    zipcode?: true
+    phoneNumber?: true
     verificationToken?: true
     _all?: true
   }
@@ -1995,6 +2078,12 @@ export namespace Prisma {
     role: Role
     emailVerified: Date | null
     image: string | null
+    dateOfBirth: Date | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zipcode: string | null
+    phoneNumber: string | null
     verificationToken: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
@@ -2024,12 +2113,21 @@ export namespace Prisma {
     role?: boolean
     emailVerified?: boolean
     image?: boolean
+    dateOfBirth?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    zipcode?: boolean
+    phoneNumber?: boolean
     verificationToken?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
     bookings?: boolean | User$bookingsArgs<ExtArgs>
     assignedBookings?: boolean | User$assignedBookingsArgs<ExtArgs>
+<<<<<<< HEAD
     payments?: boolean | User$paymentsArgs<ExtArgs>
     bookingStatusHistories?: boolean | User$bookingStatusHistoriesArgs<ExtArgs>
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     _count?: boolean | UserCountOutputTypeArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2042,6 +2140,12 @@ export namespace Prisma {
     role?: boolean
     emailVerified?: boolean
     image?: boolean
+    dateOfBirth?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    zipcode?: boolean
+    phoneNumber?: boolean
     verificationToken?: boolean
   }
 
@@ -2049,8 +2153,11 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     bookings?: boolean | User$bookingsArgs<ExtArgs>
     assignedBookings?: boolean | User$assignedBookingsArgs<ExtArgs>
+<<<<<<< HEAD
     payments?: boolean | User$paymentsArgs<ExtArgs>
     bookingStatusHistories?: boolean | User$bookingStatusHistoriesArgs<ExtArgs>
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     _count?: boolean | UserCountOutputTypeArgs<ExtArgs>
   }
 
@@ -2430,10 +2537,13 @@ export namespace Prisma {
 
     assignedBookings<T extends User$assignedBookingsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedBookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<BookingPayload<ExtArgs>, T, 'findMany', never>| Null>;
 
+<<<<<<< HEAD
     payments<T extends User$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'findMany', never>| Null>;
 
     bookingStatusHistories<T extends User$bookingStatusHistoriesArgs<ExtArgs> = {}>(args?: Subset<T, User$bookingStatusHistoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<BookingStatusHistoryPayload<ExtArgs>, T, 'findMany', never>| Null>;
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2853,6 +2963,7 @@ export namespace Prisma {
 
 
   /**
+<<<<<<< HEAD
    * User.payments
    */
   export type User$paymentsArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
@@ -2895,6 +3006,8 @@ export namespace Prisma {
 
 
   /**
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
    * User without action
    */
   export type UserArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
@@ -5817,9 +5930,13 @@ export namespace Prisma {
     lastName: string | null
     phoneNumber: string | null
     email: string | null
+<<<<<<< HEAD
     additionalDirections: string | null
     additionalRequests: string | null
     isPaid: boolean | null
+=======
+    notes: string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingMaxAggregateOutputType = {
@@ -5842,9 +5959,13 @@ export namespace Prisma {
     lastName: string | null
     phoneNumber: string | null
     email: string | null
+<<<<<<< HEAD
     additionalDirections: string | null
     additionalRequests: string | null
     isPaid: boolean | null
+=======
+    notes: string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCountAggregateOutputType = {
@@ -5867,9 +5988,13 @@ export namespace Prisma {
     lastName: number
     phoneNumber: number
     email: number
+<<<<<<< HEAD
     additionalDirections: number
     additionalRequests: number
     isPaid: number
+=======
+    notes: number
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     _all: number
   }
 
@@ -5902,9 +6027,13 @@ export namespace Prisma {
     lastName?: true
     phoneNumber?: true
     email?: true
+<<<<<<< HEAD
     additionalDirections?: true
     additionalRequests?: true
     isPaid?: true
+=======
+    notes?: true
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingMaxAggregateInputType = {
@@ -5927,9 +6056,13 @@ export namespace Prisma {
     lastName?: true
     phoneNumber?: true
     email?: true
+<<<<<<< HEAD
     additionalDirections?: true
     additionalRequests?: true
     isPaid?: true
+=======
+    notes?: true
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCountAggregateInputType = {
@@ -5952,9 +6085,13 @@ export namespace Prisma {
     lastName?: true
     phoneNumber?: true
     email?: true
+<<<<<<< HEAD
     additionalDirections?: true
     additionalRequests?: true
     isPaid?: true
+=======
+    notes?: true
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     _all?: true
   }
 
@@ -6065,9 +6202,13 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections: string | null
     additionalRequests: string | null
     isPaid: boolean
+=======
+    notes: string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     _count: BookingCountAggregateOutputType | null
     _avg: BookingAvgAggregateOutputType | null
     _sum: BookingSumAggregateOutputType | null
@@ -6109,6 +6250,7 @@ export namespace Prisma {
     lastName?: boolean
     phoneNumber?: boolean
     email?: boolean
+<<<<<<< HEAD
     additionalDirections?: boolean
     additionalRequests?: boolean
     isPaid?: boolean
@@ -6118,6 +6260,13 @@ export namespace Prisma {
     package?: boolean | PackageArgs<ExtArgs>
     addOns?: boolean | Booking$addOnsArgs<ExtArgs>
     payments?: boolean | Booking$paymentsArgs<ExtArgs>
+=======
+    notes?: boolean
+    client?: boolean | UserArgs<ExtArgs>
+    photographer?: boolean | UserArgs<ExtArgs>
+    package?: boolean | PackageArgs<ExtArgs>
+    addOns?: boolean | Booking$addOnsArgs<ExtArgs>
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     _count?: boolean | BookingCountOutputTypeArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
@@ -6141,18 +6290,27 @@ export namespace Prisma {
     lastName?: boolean
     phoneNumber?: boolean
     email?: boolean
+<<<<<<< HEAD
     additionalDirections?: boolean
     additionalRequests?: boolean
     isPaid?: boolean
+=======
+    notes?: boolean
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     client?: boolean | UserArgs<ExtArgs>
     photographer?: boolean | UserArgs<ExtArgs>
+<<<<<<< HEAD
     statusHistories?: boolean | Booking$statusHistoriesArgs<ExtArgs>
     package?: boolean | PackageArgs<ExtArgs>
     addOns?: boolean | Booking$addOnsArgs<ExtArgs>
     payments?: boolean | Booking$paymentsArgs<ExtArgs>
+=======
+    package?: boolean | PackageArgs<ExtArgs>
+    addOns?: boolean | Booking$addOnsArgs<ExtArgs>
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     _count?: boolean | BookingCountOutputTypeArgs<ExtArgs>
   }
 
@@ -6530,14 +6688,20 @@ export namespace Prisma {
 
     photographer<T extends UserArgs<ExtArgs> = {}>(args?: Subset<T, UserArgs<ExtArgs>>): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUnique', never> | Null, never, ExtArgs>;
 
+<<<<<<< HEAD
     statusHistories<T extends Booking$statusHistoriesArgs<ExtArgs> = {}>(args?: Subset<T, Booking$statusHistoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<BookingStatusHistoryPayload<ExtArgs>, T, 'findMany', never>| Null>;
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     package<T extends PackageArgs<ExtArgs> = {}>(args?: Subset<T, PackageArgs<ExtArgs>>): Prisma__PackageClient<$Types.GetResult<PackagePayload<ExtArgs>, T, 'findUnique', never> | Null, never, ExtArgs>;
 
     addOns<T extends Booking$addOnsArgs<ExtArgs> = {}>(args?: Subset<T, Booking$addOnsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<AddOnPayload<ExtArgs>, T, 'findMany', never>| Null>;
 
+<<<<<<< HEAD
     payments<T extends Booking$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Booking$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'findMany', never>| Null>;
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -6973,6 +7137,7 @@ export namespace Prisma {
 
 
   /**
+<<<<<<< HEAD
    * Model BookingStatusHistory
    */
 
@@ -7919,6 +8084,8 @@ export namespace Prisma {
 
 
   /**
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
    * Model AddOn
    */
 
@@ -9888,6 +10055,12 @@ export namespace Prisma {
     role: 'role',
     emailVerified: 'emailVerified',
     image: 'image',
+    dateOfBirth: 'dateOfBirth',
+    address: 'address',
+    city: 'city',
+    state: 'state',
+    zipcode: 'zipcode',
+    phoneNumber: 'phoneNumber',
     verificationToken: 'verificationToken'
   };
 
@@ -9952,6 +10125,7 @@ export namespace Prisma {
     lastName: 'lastName',
     phoneNumber: 'phoneNumber',
     email: 'email',
+<<<<<<< HEAD
     additionalDirections: 'additionalDirections',
     additionalRequests: 'additionalRequests',
     isPaid: 'isPaid'
@@ -9971,6 +10145,12 @@ export namespace Prisma {
   };
 
   export type BookingStatusHistoryScalarFieldEnum = (typeof BookingStatusHistoryScalarFieldEnum)[keyof typeof BookingStatusHistoryScalarFieldEnum]
+=======
+    notes: 'notes'
+  };
+
+  export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 
 
   export const AddOnScalarFieldEnum: {
@@ -10039,12 +10219,21 @@ export namespace Prisma {
     role?: EnumRoleFilter | Role
     emailVerified?: DateTimeNullableFilter | Date | string | null
     image?: StringNullableFilter | string | null
+    dateOfBirth?: DateTimeNullableFilter | Date | string | null
+    address?: StringNullableFilter | string | null
+    city?: StringNullableFilter | string | null
+    state?: StringNullableFilter | string | null
+    zipcode?: StringNullableFilter | string | null
+    phoneNumber?: StringNullableFilter | string | null
     verificationToken?: StringNullableFilter | string | null
     accounts?: AccountListRelationFilter
     bookings?: BookingListRelationFilter
     assignedBookings?: BookingListRelationFilter
+<<<<<<< HEAD
     payments?: PaymentListRelationFilter
     bookingStatusHistories?: BookingStatusHistoryListRelationFilter
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserOrderByWithRelationInput = {
@@ -10056,12 +10245,21 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    zipcode?: SortOrderInput | SortOrder
+    phoneNumber?: SortOrderInput | SortOrder
     verificationToken?: SortOrderInput | SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     bookings?: BookingOrderByRelationAggregateInput
     assignedBookings?: BookingOrderByRelationAggregateInput
+<<<<<<< HEAD
     payments?: PaymentOrderByRelationAggregateInput
     bookingStatusHistories?: BookingStatusHistoryOrderByRelationAggregateInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserWhereUniqueInput = {
@@ -10078,6 +10276,12 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrderInput | SortOrder
     image?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    zipcode?: SortOrderInput | SortOrder
+    phoneNumber?: SortOrderInput | SortOrder
     verificationToken?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -10096,6 +10300,12 @@ export namespace Prisma {
     role?: EnumRoleWithAggregatesFilter | Role
     emailVerified?: DateTimeNullableWithAggregatesFilter | Date | string | null
     image?: StringNullableWithAggregatesFilter | string | null
+    dateOfBirth?: DateTimeNullableWithAggregatesFilter | Date | string | null
+    address?: StringNullableWithAggregatesFilter | string | null
+    city?: StringNullableWithAggregatesFilter | string | null
+    state?: StringNullableWithAggregatesFilter | string | null
+    zipcode?: StringNullableWithAggregatesFilter | string | null
+    phoneNumber?: StringNullableWithAggregatesFilter | string | null
     verificationToken?: StringNullableWithAggregatesFilter | string | null
   }
 
@@ -10287,6 +10497,7 @@ export namespace Prisma {
     lastName?: StringFilter | string
     phoneNumber?: StringFilter | string
     email?: StringFilter | string
+<<<<<<< HEAD
     additionalDirections?: StringNullableFilter | string | null
     additionalRequests?: StringNullableFilter | string | null
     isPaid?: BoolFilter | boolean
@@ -10296,6 +10507,13 @@ export namespace Prisma {
     package?: XOR<PackageRelationFilter, PackageWhereInput>
     addOns?: AddOnListRelationFilter
     payments?: PaymentListRelationFilter
+=======
+    notes?: StringNullableFilter | string | null
+    client?: XOR<UserRelationFilter, UserWhereInput>
+    photographer?: XOR<UserRelationFilter, UserWhereInput> | null
+    package?: XOR<PackageRelationFilter, PackageWhereInput>
+    addOns?: AddOnListRelationFilter
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingOrderByWithRelationInput = {
@@ -10318,6 +10536,7 @@ export namespace Prisma {
     lastName?: SortOrder
     phoneNumber?: SortOrder
     email?: SortOrder
+<<<<<<< HEAD
     additionalDirections?: SortOrderInput | SortOrder
     additionalRequests?: SortOrderInput | SortOrder
     isPaid?: SortOrder
@@ -10327,6 +10546,13 @@ export namespace Prisma {
     package?: PackageOrderByWithRelationInput
     addOns?: AddOnOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
+=======
+    notes?: SortOrderInput | SortOrder
+    client?: UserOrderByWithRelationInput
+    photographer?: UserOrderByWithRelationInput
+    package?: PackageOrderByWithRelationInput
+    addOns?: AddOnOrderByRelationAggregateInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingWhereUniqueInput = {
@@ -10353,9 +10579,13 @@ export namespace Prisma {
     lastName?: SortOrder
     phoneNumber?: SortOrder
     email?: SortOrder
+<<<<<<< HEAD
     additionalDirections?: SortOrderInput | SortOrder
     additionalRequests?: SortOrderInput | SortOrder
     isPaid?: SortOrder
+=======
+    notes?: SortOrderInput | SortOrder
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     _count?: BookingCountOrderByAggregateInput
     _avg?: BookingAvgOrderByAggregateInput
     _max?: BookingMaxOrderByAggregateInput
@@ -10386,6 +10616,7 @@ export namespace Prisma {
     lastName?: StringWithAggregatesFilter | string
     phoneNumber?: StringWithAggregatesFilter | string
     email?: StringWithAggregatesFilter | string
+<<<<<<< HEAD
     additionalDirections?: StringNullableWithAggregatesFilter | string | null
     additionalRequests?: StringNullableWithAggregatesFilter | string | null
     isPaid?: BoolWithAggregatesFilter | boolean
@@ -10446,6 +10677,9 @@ export namespace Prisma {
     notes?: StringNullableWithAggregatesFilter | string | null
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
+=======
+    notes?: StringNullableWithAggregatesFilter | string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type AddOnWhereInput = {
@@ -10569,12 +10803,21 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
     verificationToken?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     bookings?: BookingCreateNestedManyWithoutClientInput
     assignedBookings?: BookingCreateNestedManyWithoutPhotographerInput
+<<<<<<< HEAD
     payments?: PaymentCreateNestedManyWithoutUserInput
     bookingStatusHistories?: BookingStatusHistoryCreateNestedManyWithoutUserInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUncheckedCreateInput = {
@@ -10586,12 +10829,21 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
     verificationToken?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     bookings?: BookingUncheckedCreateNestedManyWithoutClientInput
     assignedBookings?: BookingUncheckedCreateNestedManyWithoutPhotographerInput
+<<<<<<< HEAD
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     bookingStatusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutUserInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUpdateInput = {
@@ -10603,12 +10855,21 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | Role
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     bookings?: BookingUpdateManyWithoutClientNestedInput
     assignedBookings?: BookingUpdateManyWithoutPhotographerNestedInput
+<<<<<<< HEAD
     payments?: PaymentUpdateManyWithoutUserNestedInput
     bookingStatusHistories?: BookingStatusHistoryUpdateManyWithoutUserNestedInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10620,12 +10881,21 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | Role
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutClientNestedInput
     assignedBookings?: BookingUncheckedUpdateManyWithoutPhotographerNestedInput
+<<<<<<< HEAD
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     bookingStatusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutUserNestedInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserCreateManyInput = {
@@ -10637,6 +10907,12 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
     verificationToken?: string | null
   }
 
@@ -10649,6 +10925,12 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | Role
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -10661,6 +10943,12 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | Role
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -10884,6 +11172,7 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
@@ -10893,6 +11182,13 @@ export namespace Prisma {
     package: PackageCreateNestedOneWithoutBookingsInput
     addOns?: AddOnCreateNestedManyWithoutBookingInput
     payments?: PaymentCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    client: UserCreateNestedOneWithoutBookingsInput
+    photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
+    package: PackageCreateNestedOneWithoutBookingsInput
+    addOns?: AddOnCreateNestedManyWithoutBookingInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedCreateInput = {
@@ -10915,12 +11211,17 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
     payments?: PaymentUncheckedCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUpdateInput = {
@@ -10940,6 +11241,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -10949,6 +11251,13 @@ export namespace Prisma {
     package?: PackageUpdateOneRequiredWithoutBookingsNestedInput
     addOns?: AddOnUpdateManyWithoutBookingNestedInput
     payments?: PaymentUpdateManyWithoutBookingNestedInput
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    client?: UserUpdateOneRequiredWithoutBookingsNestedInput
+    photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
+    package?: PackageUpdateOneRequiredWithoutBookingsNestedInput
+    addOns?: AddOnUpdateManyWithoutBookingNestedInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedUpdateInput = {
@@ -10971,12 +11280,17 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutBookingNestedInput
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateManyInput = {
@@ -10999,9 +11313,13 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
+=======
+    notes?: string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUpdateManyMutationInput = {
@@ -11021,9 +11339,13 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedUpdateManyInput = {
@@ -11046,6 +11368,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -11117,6 +11440,9 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type AddOnCreateInput = {
@@ -11351,6 +11677,12 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    dateOfBirth?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    zipcode?: SortOrder
+    phoneNumber?: SortOrder
     verificationToken?: SortOrder
   }
 
@@ -11363,6 +11695,12 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    dateOfBirth?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    zipcode?: SortOrder
+    phoneNumber?: SortOrder
     verificationToken?: SortOrder
   }
 
@@ -11375,6 +11713,12 @@ export namespace Prisma {
     role?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    dateOfBirth?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    zipcode?: SortOrder
+    phoneNumber?: SortOrder
     verificationToken?: SortOrder
   }
 
@@ -11706,11 +12050,14 @@ export namespace Prisma {
     not?: NestedEnumBookingStatusFilter | BookingStatus
   }
 
+<<<<<<< HEAD
   export type BoolFilter = {
     equals?: boolean
     not?: NestedBoolFilter | boolean
   }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type PackageRelationFilter = {
     is?: PackageWhereInput | null
     isNot?: PackageWhereInput | null
@@ -11746,9 +12093,13 @@ export namespace Prisma {
     lastName?: SortOrder
     phoneNumber?: SortOrder
     email?: SortOrder
+<<<<<<< HEAD
     additionalDirections?: SortOrder
     additionalRequests?: SortOrder
     isPaid?: SortOrder
+=======
+    notes?: SortOrder
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingAvgOrderByAggregateInput = {
@@ -11775,9 +12126,13 @@ export namespace Prisma {
     lastName?: SortOrder
     phoneNumber?: SortOrder
     email?: SortOrder
+<<<<<<< HEAD
     additionalDirections?: SortOrder
     additionalRequests?: SortOrder
     isPaid?: SortOrder
+=======
+    notes?: SortOrder
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingMinOrderByAggregateInput = {
@@ -11800,9 +12155,13 @@ export namespace Prisma {
     lastName?: SortOrder
     phoneNumber?: SortOrder
     email?: SortOrder
+<<<<<<< HEAD
     additionalDirections?: SortOrder
     additionalRequests?: SortOrder
     isPaid?: SortOrder
+=======
+    notes?: SortOrder
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingSumOrderByAggregateInput = {
@@ -11819,6 +12178,7 @@ export namespace Prisma {
     _max?: NestedEnumBookingStatusFilter
   }
 
+<<<<<<< HEAD
   export type BoolWithAggregatesFilter = {
     equals?: boolean
     not?: NestedBoolWithAggregatesFilter | boolean
@@ -11860,6 +12220,11 @@ export namespace Prisma {
     notes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+=======
+  export type BookingRelationFilter = {
+    is?: BookingWhereInput | null
+    isNot?: BookingWhereInput | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type AddOnCountOrderByAggregateInput = {
@@ -11963,6 +12328,16 @@ export namespace Prisma {
     create?: XOR<Enumerable<BookingCreateWithoutClientInput>, Enumerable<BookingUncheckedCreateWithoutClientInput>>
     connectOrCreate?: Enumerable<BookingCreateOrConnectWithoutClientInput>
     createMany?: BookingCreateManyClientInputEnvelope
+<<<<<<< HEAD
+=======
+    connect?: Enumerable<BookingWhereUniqueInput>
+  }
+
+  export type BookingCreateNestedManyWithoutPhotographerInput = {
+    create?: XOR<Enumerable<BookingCreateWithoutPhotographerInput>, Enumerable<BookingUncheckedCreateWithoutPhotographerInput>>
+    connectOrCreate?: Enumerable<BookingCreateOrConnectWithoutPhotographerInput>
+    createMany?: BookingCreateManyPhotographerInputEnvelope
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     connect?: Enumerable<BookingWhereUniqueInput>
   }
 
@@ -11998,6 +12373,16 @@ export namespace Prisma {
     create?: XOR<Enumerable<BookingCreateWithoutClientInput>, Enumerable<BookingUncheckedCreateWithoutClientInput>>
     connectOrCreate?: Enumerable<BookingCreateOrConnectWithoutClientInput>
     createMany?: BookingCreateManyClientInputEnvelope
+<<<<<<< HEAD
+=======
+    connect?: Enumerable<BookingWhereUniqueInput>
+  }
+
+  export type BookingUncheckedCreateNestedManyWithoutPhotographerInput = {
+    create?: XOR<Enumerable<BookingCreateWithoutPhotographerInput>, Enumerable<BookingUncheckedCreateWithoutPhotographerInput>>
+    connectOrCreate?: Enumerable<BookingCreateOrConnectWithoutPhotographerInput>
+    createMany?: BookingCreateManyPhotographerInputEnvelope
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     connect?: Enumerable<BookingWhereUniqueInput>
   }
 
@@ -12063,6 +12448,23 @@ export namespace Prisma {
     connect?: Enumerable<BookingWhereUniqueInput>
     update?: Enumerable<BookingUpdateWithWhereUniqueWithoutClientInput>
     updateMany?: Enumerable<BookingUpdateManyWithWhereWithoutClientInput>
+<<<<<<< HEAD
+=======
+    deleteMany?: Enumerable<BookingScalarWhereInput>
+  }
+
+  export type BookingUpdateManyWithoutPhotographerNestedInput = {
+    create?: XOR<Enumerable<BookingCreateWithoutPhotographerInput>, Enumerable<BookingUncheckedCreateWithoutPhotographerInput>>
+    connectOrCreate?: Enumerable<BookingCreateOrConnectWithoutPhotographerInput>
+    upsert?: Enumerable<BookingUpsertWithWhereUniqueWithoutPhotographerInput>
+    createMany?: BookingCreateManyPhotographerInputEnvelope
+    set?: Enumerable<BookingWhereUniqueInput>
+    disconnect?: Enumerable<BookingWhereUniqueInput>
+    delete?: Enumerable<BookingWhereUniqueInput>
+    connect?: Enumerable<BookingWhereUniqueInput>
+    update?: Enumerable<BookingUpdateWithWhereUniqueWithoutPhotographerInput>
+    updateMany?: Enumerable<BookingUpdateManyWithWhereWithoutPhotographerInput>
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     deleteMany?: Enumerable<BookingScalarWhereInput>
   }
 
@@ -12133,6 +12535,23 @@ export namespace Prisma {
     connect?: Enumerable<BookingWhereUniqueInput>
     update?: Enumerable<BookingUpdateWithWhereUniqueWithoutClientInput>
     updateMany?: Enumerable<BookingUpdateManyWithWhereWithoutClientInput>
+<<<<<<< HEAD
+=======
+    deleteMany?: Enumerable<BookingScalarWhereInput>
+  }
+
+  export type BookingUncheckedUpdateManyWithoutPhotographerNestedInput = {
+    create?: XOR<Enumerable<BookingCreateWithoutPhotographerInput>, Enumerable<BookingUncheckedCreateWithoutPhotographerInput>>
+    connectOrCreate?: Enumerable<BookingCreateOrConnectWithoutPhotographerInput>
+    upsert?: Enumerable<BookingUpsertWithWhereUniqueWithoutPhotographerInput>
+    createMany?: BookingCreateManyPhotographerInputEnvelope
+    set?: Enumerable<BookingWhereUniqueInput>
+    disconnect?: Enumerable<BookingWhereUniqueInput>
+    delete?: Enumerable<BookingWhereUniqueInput>
+    connect?: Enumerable<BookingWhereUniqueInput>
+    update?: Enumerable<BookingUpdateWithWhereUniqueWithoutPhotographerInput>
+    updateMany?: Enumerable<BookingUpdateManyWithWhereWithoutPhotographerInput>
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     deleteMany?: Enumerable<BookingScalarWhereInput>
   }
 
@@ -12291,6 +12710,7 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+<<<<<<< HEAD
   export type BookingStatusHistoryCreateNestedManyWithoutBookingInput = {
     create?: XOR<Enumerable<BookingStatusHistoryCreateWithoutBookingInput>, Enumerable<BookingStatusHistoryUncheckedCreateWithoutBookingInput>>
     connectOrCreate?: Enumerable<BookingStatusHistoryCreateOrConnectWithoutBookingInput>
@@ -12305,12 +12725,29 @@ export namespace Prisma {
   }
 
   export type AddOnCreateNestedManyWithoutBookingInput = {
+=======
+  export type PackageCreateNestedOneWithoutBookingsInput = {
+    create?: XOR<PackageCreateWithoutBookingsInput, PackageUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: PackageCreateOrConnectWithoutBookingsInput
+    connect?: PackageWhereUniqueInput
+  }
+
+  export type AddOnCreateNestedManyWithoutBookingInput = {
     create?: XOR<Enumerable<AddOnCreateWithoutBookingInput>, Enumerable<AddOnUncheckedCreateWithoutBookingInput>>
     connectOrCreate?: Enumerable<AddOnCreateOrConnectWithoutBookingInput>
     createMany?: AddOnCreateManyBookingInputEnvelope
     connect?: Enumerable<AddOnWhereUniqueInput>
   }
 
+  export type AddOnUncheckedCreateNestedManyWithoutBookingInput = {
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
+    create?: XOR<Enumerable<AddOnCreateWithoutBookingInput>, Enumerable<AddOnUncheckedCreateWithoutBookingInput>>
+    connectOrCreate?: Enumerable<AddOnCreateOrConnectWithoutBookingInput>
+    createMany?: AddOnCreateManyBookingInputEnvelope
+    connect?: Enumerable<AddOnWhereUniqueInput>
+  }
+
+<<<<<<< HEAD
   export type PaymentCreateNestedManyWithoutBookingInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutBookingInput>, Enumerable<PaymentUncheckedCreateWithoutBookingInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutBookingInput>
@@ -12355,6 +12792,20 @@ export namespace Prisma {
     update?: XOR<UserUpdateWithoutBookingsInput, UserUncheckedUpdateWithoutBookingsInput>
   }
 
+=======
+  export type EnumBookingStatusFieldUpdateOperationsInput = {
+    set?: BookingStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutBookingsNestedInput = {
+    create?: XOR<UserCreateWithoutBookingsInput, UserUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBookingsInput
+    upsert?: UserUpsertWithoutBookingsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutBookingsInput, UserUncheckedUpdateWithoutBookingsInput>
+  }
+
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type UserUpdateOneWithoutAssignedBookingsNestedInput = {
     create?: XOR<UserCreateWithoutAssignedBookingsInput, UserUncheckedCreateWithoutAssignedBookingsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAssignedBookingsInput
@@ -12365,6 +12816,7 @@ export namespace Prisma {
     update?: XOR<UserUpdateWithoutAssignedBookingsInput, UserUncheckedUpdateWithoutAssignedBookingsInput>
   }
 
+<<<<<<< HEAD
   export type BookingStatusHistoryUpdateManyWithoutBookingNestedInput = {
     create?: XOR<Enumerable<BookingStatusHistoryCreateWithoutBookingInput>, Enumerable<BookingStatusHistoryUncheckedCreateWithoutBookingInput>>
     connectOrCreate?: Enumerable<BookingStatusHistoryCreateOrConnectWithoutBookingInput>
@@ -12379,6 +12831,8 @@ export namespace Prisma {
     deleteMany?: Enumerable<BookingStatusHistoryScalarWhereInput>
   }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type PackageUpdateOneRequiredWithoutBookingsNestedInput = {
     create?: XOR<PackageCreateWithoutBookingsInput, PackageUncheckedCreateWithoutBookingsInput>
     connectOrCreate?: PackageCreateOrConnectWithoutBookingsInput
@@ -12401,6 +12855,7 @@ export namespace Prisma {
     deleteMany?: Enumerable<AddOnScalarWhereInput>
   }
 
+<<<<<<< HEAD
   export type PaymentUpdateManyWithoutBookingNestedInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutBookingInput>, Enumerable<PaymentUncheckedCreateWithoutBookingInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutBookingInput>
@@ -12429,6 +12884,8 @@ export namespace Prisma {
     deleteMany?: Enumerable<BookingStatusHistoryScalarWhereInput>
   }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type AddOnUncheckedUpdateManyWithoutBookingNestedInput = {
     create?: XOR<Enumerable<AddOnCreateWithoutBookingInput>, Enumerable<AddOnUncheckedCreateWithoutBookingInput>>
     connectOrCreate?: Enumerable<AddOnCreateOrConnectWithoutBookingInput>
@@ -12443,6 +12900,7 @@ export namespace Prisma {
     deleteMany?: Enumerable<AddOnScalarWhereInput>
   }
 
+<<<<<<< HEAD
   export type PaymentUncheckedUpdateManyWithoutBookingNestedInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutBookingInput>, Enumerable<PaymentUncheckedCreateWithoutBookingInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutBookingInput>
@@ -12485,6 +12943,8 @@ export namespace Prisma {
     update?: XOR<UserUpdateWithoutBookingStatusHistoriesInput, UserUncheckedUpdateWithoutBookingStatusHistoriesInput>
   }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type BookingCreateNestedOneWithoutAddOnsInput = {
     create?: XOR<BookingCreateWithoutAddOnsInput, BookingUncheckedCreateWithoutAddOnsInput>
     connectOrCreate?: BookingCreateOrConnectWithoutAddOnsInput
@@ -12497,6 +12957,7 @@ export namespace Prisma {
     upsert?: BookingUpsertWithoutAddOnsInput
     connect?: BookingWhereUniqueInput
     update?: XOR<BookingUpdateWithoutAddOnsInput, BookingUncheckedUpdateWithoutAddOnsInput>
+<<<<<<< HEAD
   }
 
   export type UserCreateNestedOneWithoutPaymentsInput = {
@@ -12529,6 +12990,8 @@ export namespace Prisma {
     upsert?: BookingUpsertWithoutPaymentsInput
     connect?: BookingWhereUniqueInput
     update?: XOR<BookingUpdateWithoutPaymentsInput, BookingUncheckedUpdateWithoutPaymentsInput>
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type NestedStringFilter = {
@@ -12775,11 +13238,14 @@ export namespace Prisma {
     not?: NestedEnumBookingStatusFilter | BookingStatus
   }
 
+<<<<<<< HEAD
   export type NestedBoolFilter = {
     equals?: boolean
     not?: NestedBoolFilter | boolean
   }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type NestedEnumBookingStatusWithAggregatesFilter = {
     equals?: BookingStatus
     in?: Enumerable<BookingStatus>
@@ -12790,6 +13256,7 @@ export namespace Prisma {
     _max?: NestedEnumBookingStatusFilter
   }
 
+<<<<<<< HEAD
   export type NestedBoolWithAggregatesFilter = {
     equals?: boolean
     not?: NestedBoolWithAggregatesFilter | boolean
@@ -12815,6 +13282,8 @@ export namespace Prisma {
     _max?: NestedEnumPaymentStatusFilter
   }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type AccountCreateWithoutUserInput = {
     id?: string
     type: string
@@ -12868,6 +13337,7 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
@@ -12876,6 +13346,12 @@ export namespace Prisma {
     package: PackageCreateNestedOneWithoutBookingsInput
     addOns?: AddOnCreateNestedManyWithoutBookingInput
     payments?: PaymentCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
+    package: PackageCreateNestedOneWithoutBookingsInput
+    addOns?: AddOnCreateNestedManyWithoutBookingInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedCreateWithoutClientInput = {
@@ -12897,12 +13373,17 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
     payments?: PaymentUncheckedCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateOrConnectWithoutClientInput = {
@@ -12932,6 +13413,7 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
@@ -12940,6 +13422,12 @@ export namespace Prisma {
     package: PackageCreateNestedOneWithoutBookingsInput
     addOns?: AddOnCreateNestedManyWithoutBookingInput
     payments?: PaymentCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    client: UserCreateNestedOneWithoutBookingsInput
+    package: PackageCreateNestedOneWithoutBookingsInput
+    addOns?: AddOnCreateNestedManyWithoutBookingInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedCreateWithoutPhotographerInput = {
@@ -12961,12 +13449,17 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
     payments?: PaymentUncheckedCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateOrConnectWithoutPhotographerInput = {
@@ -12976,6 +13469,7 @@ export namespace Prisma {
 
   export type BookingCreateManyPhotographerInputEnvelope = {
     data: Enumerable<BookingCreateManyPhotographerInput>
+<<<<<<< HEAD
     skipDuplicates?: boolean
   }
 
@@ -13034,6 +13528,8 @@ export namespace Prisma {
 
   export type BookingStatusHistoryCreateManyUserInputEnvelope = {
     data: Enumerable<BookingStatusHistoryCreateManyUserInput>
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     skipDuplicates?: boolean
   }
 
@@ -13109,9 +13605,13 @@ export namespace Prisma {
     lastName?: StringFilter | string
     phoneNumber?: StringFilter | string
     email?: StringFilter | string
+<<<<<<< HEAD
     additionalDirections?: StringNullableFilter | string | null
     additionalRequests?: StringNullableFilter | string | null
     isPaid?: BoolFilter | boolean
+=======
+    notes?: StringNullableFilter | string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUpsertWithWhereUniqueWithoutPhotographerInput = {
@@ -13128,6 +13628,7 @@ export namespace Prisma {
   export type BookingUpdateManyWithWhereWithoutPhotographerInput = {
     where: BookingScalarWhereInput
     data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutAssignedBookingsInput>
+<<<<<<< HEAD
   }
 
   export type PaymentUpsertWithWhereUniqueWithoutUserInput = {
@@ -13187,6 +13688,8 @@ export namespace Prisma {
     notes?: StringNullableFilter | string | null
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -13198,11 +13701,20 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
     verificationToken?: string | null
     bookings?: BookingCreateNestedManyWithoutClientInput
     assignedBookings?: BookingCreateNestedManyWithoutPhotographerInput
+<<<<<<< HEAD
     payments?: PaymentCreateNestedManyWithoutUserInput
     bookingStatusHistories?: BookingStatusHistoryCreateNestedManyWithoutUserInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -13214,11 +13726,20 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
     verificationToken?: string | null
     bookings?: BookingUncheckedCreateNestedManyWithoutClientInput
     assignedBookings?: BookingUncheckedCreateNestedManyWithoutPhotographerInput
+<<<<<<< HEAD
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     bookingStatusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutUserInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -13240,11 +13761,20 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | Role
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     bookings?: BookingUpdateManyWithoutClientNestedInput
     assignedBookings?: BookingUpdateManyWithoutPhotographerNestedInput
+<<<<<<< HEAD
     payments?: PaymentUpdateManyWithoutUserNestedInput
     bookingStatusHistories?: BookingStatusHistoryUpdateManyWithoutUserNestedInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -13256,11 +13786,20 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | Role
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     bookings?: BookingUncheckedUpdateManyWithoutClientNestedInput
     assignedBookings?: BookingUncheckedUpdateManyWithoutPhotographerNestedInput
+<<<<<<< HEAD
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     bookingStatusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutUserNestedInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateWithoutPackageInput = {
@@ -13280,6 +13819,7 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
@@ -13288,6 +13828,12 @@ export namespace Prisma {
     statusHistories?: BookingStatusHistoryCreateNestedManyWithoutBookingInput
     addOns?: AddOnCreateNestedManyWithoutBookingInput
     payments?: PaymentCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    client: UserCreateNestedOneWithoutBookingsInput
+    photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
+    addOns?: AddOnCreateNestedManyWithoutBookingInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedCreateWithoutPackageInput = {
@@ -13309,12 +13855,17 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
     payments?: PaymentUncheckedCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateOrConnectWithoutPackageInput = {
@@ -13352,11 +13903,20 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
     verificationToken?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     assignedBookings?: BookingCreateNestedManyWithoutPhotographerInput
+<<<<<<< HEAD
     payments?: PaymentCreateNestedManyWithoutUserInput
     bookingStatusHistories?: BookingStatusHistoryCreateNestedManyWithoutUserInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUncheckedCreateWithoutBookingsInput = {
@@ -13368,11 +13928,20 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
     verificationToken?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     assignedBookings?: BookingUncheckedCreateNestedManyWithoutPhotographerInput
+<<<<<<< HEAD
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     bookingStatusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutUserInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserCreateOrConnectWithoutBookingsInput = {
@@ -13389,11 +13958,23 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+<<<<<<< HEAD
     verificationToken?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     bookings?: BookingCreateNestedManyWithoutClientInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     bookingStatusHistories?: BookingStatusHistoryCreateNestedManyWithoutUserInput
+=======
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
+    verificationToken?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    bookings?: BookingCreateNestedManyWithoutClientInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUncheckedCreateWithoutAssignedBookingsInput = {
@@ -13405,11 +13986,23 @@ export namespace Prisma {
     role: Role
     emailVerified?: Date | string | null
     image?: string | null
+<<<<<<< HEAD
     verificationToken?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     bookings?: BookingUncheckedCreateNestedManyWithoutClientInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     bookingStatusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutUserInput
+=======
+    dateOfBirth?: Date | string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    zipcode?: string | null
+    phoneNumber?: string | null
+    verificationToken?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    bookings?: BookingUncheckedCreateNestedManyWithoutClientInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserCreateOrConnectWithoutAssignedBookingsInput = {
@@ -13417,6 +14010,7 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutAssignedBookingsInput, UserUncheckedCreateWithoutAssignedBookingsInput>
   }
 
+<<<<<<< HEAD
   export type BookingStatusHistoryCreateWithoutBookingInput = {
     id?: string
     status: BookingStatus
@@ -13467,6 +14061,30 @@ export namespace Prisma {
     create: XOR<PackageCreateWithoutBookingsInput, PackageUncheckedCreateWithoutBookingsInput>
   }
 
+=======
+  export type PackageCreateWithoutBookingsInput = {
+    name: string
+    price: number
+    description: string
+    features?: PackageCreatefeaturesInput | Enumerable<string>
+    pricePerExtra?: number | null
+  }
+
+  export type PackageUncheckedCreateWithoutBookingsInput = {
+    id?: number
+    name: string
+    price: number
+    description: string
+    features?: PackageCreatefeaturesInput | Enumerable<string>
+    pricePerExtra?: number | null
+  }
+
+  export type PackageCreateOrConnectWithoutBookingsInput = {
+    where: PackageWhereUniqueInput
+    create: XOR<PackageCreateWithoutBookingsInput, PackageUncheckedCreateWithoutBookingsInput>
+  }
+
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type AddOnCreateWithoutBookingInput = {
     id?: string
     addonId: string
@@ -13489,6 +14107,7 @@ export namespace Prisma {
   export type AddOnCreateManyBookingInputEnvelope = {
     data: Enumerable<AddOnCreateManyBookingInput>
     skipDuplicates?: boolean
+<<<<<<< HEAD
   }
 
   export type PaymentCreateWithoutBookingInput = {
@@ -13519,6 +14138,8 @@ export namespace Prisma {
   export type PaymentCreateManyBookingInputEnvelope = {
     data: Enumerable<PaymentCreateManyBookingInput>
     skipDuplicates?: boolean
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUpsertWithoutBookingsInput = {
@@ -13535,11 +14156,20 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | Role
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     assignedBookings?: BookingUpdateManyWithoutPhotographerNestedInput
+<<<<<<< HEAD
     payments?: PaymentUpdateManyWithoutUserNestedInput
     bookingStatusHistories?: BookingStatusHistoryUpdateManyWithoutUserNestedInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUncheckedUpdateWithoutBookingsInput = {
@@ -13551,16 +14181,26 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | Role
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     assignedBookings?: BookingUncheckedUpdateManyWithoutPhotographerNestedInput
+<<<<<<< HEAD
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     bookingStatusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutUserNestedInput
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type UserUpsertWithoutAssignedBookingsInput = {
     update: XOR<UserUpdateWithoutAssignedBookingsInput, UserUncheckedUpdateWithoutAssignedBookingsInput>
     create: XOR<UserCreateWithoutAssignedBookingsInput, UserUncheckedCreateWithoutAssignedBookingsInput>
+<<<<<<< HEAD
   }
 
   export type UserUpdateWithoutAssignedBookingsInput = {
@@ -13866,6 +14506,97 @@ export namespace Prisma {
     bookings?: BookingUncheckedUpdateManyWithoutClientNestedInput
     assignedBookings?: BookingUncheckedUpdateManyWithoutPhotographerNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+=======
+  }
+
+  export type UserUpdateWithoutAssignedBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | Role
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    bookings?: BookingUpdateManyWithoutClientNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAssignedBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastname?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | Role
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zipcode?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    bookings?: BookingUncheckedUpdateManyWithoutClientNestedInput
+  }
+
+  export type PackageUpsertWithoutBookingsInput = {
+    update: XOR<PackageUpdateWithoutBookingsInput, PackageUncheckedUpdateWithoutBookingsInput>
+    create: XOR<PackageCreateWithoutBookingsInput, PackageUncheckedCreateWithoutBookingsInput>
+  }
+
+  export type PackageUpdateWithoutBookingsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    description?: StringFieldUpdateOperationsInput | string
+    features?: PackageUpdatefeaturesInput | Enumerable<string>
+    pricePerExtra?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type PackageUncheckedUpdateWithoutBookingsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    price?: FloatFieldUpdateOperationsInput | number
+    description?: StringFieldUpdateOperationsInput | string
+    features?: PackageUpdatefeaturesInput | Enumerable<string>
+    pricePerExtra?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type AddOnUpsertWithWhereUniqueWithoutBookingInput = {
+    where: AddOnWhereUniqueInput
+    update: XOR<AddOnUpdateWithoutBookingInput, AddOnUncheckedUpdateWithoutBookingInput>
+    create: XOR<AddOnCreateWithoutBookingInput, AddOnUncheckedCreateWithoutBookingInput>
+  }
+
+  export type AddOnUpdateWithWhereUniqueWithoutBookingInput = {
+    where: AddOnWhereUniqueInput
+    data: XOR<AddOnUpdateWithoutBookingInput, AddOnUncheckedUpdateWithoutBookingInput>
+  }
+
+  export type AddOnUpdateManyWithWhereWithoutBookingInput = {
+    where: AddOnScalarWhereInput
+    data: XOR<AddOnUpdateManyMutationInput, AddOnUncheckedUpdateManyWithoutAddOnsInput>
+  }
+
+  export type AddOnScalarWhereInput = {
+    AND?: Enumerable<AddOnScalarWhereInput>
+    OR?: Enumerable<AddOnScalarWhereInput>
+    NOT?: Enumerable<AddOnScalarWhereInput>
+    id?: StringFilter | string
+    bookingId?: StringFilter | string
+    addonId?: StringFilter | string
+    name?: StringFilter | string
+    price?: FloatFilter | number
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateWithoutAddOnsInput = {
@@ -13885,6 +14616,7 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
@@ -13893,6 +14625,12 @@ export namespace Prisma {
     statusHistories?: BookingStatusHistoryCreateNestedManyWithoutBookingInput
     package: PackageCreateNestedOneWithoutBookingsInput
     payments?: PaymentCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+    client: UserCreateNestedOneWithoutBookingsInput
+    photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
+    package: PackageCreateNestedOneWithoutBookingsInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedCreateWithoutAddOnsInput = {
@@ -13915,11 +14653,15 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     payments?: PaymentUncheckedCreateNestedManyWithoutBookingInput
+=======
+    notes?: string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateOrConnectWithoutAddOnsInput = {
@@ -13949,6 +14691,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -13957,6 +14700,12 @@ export namespace Prisma {
     statusHistories?: BookingStatusHistoryUpdateManyWithoutBookingNestedInput
     package?: PackageUpdateOneRequiredWithoutBookingsNestedInput
     payments?: PaymentUpdateManyWithoutBookingNestedInput
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    client?: UserUpdateOneRequiredWithoutBookingsNestedInput
+    photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
+    package?: PackageUpdateOneRequiredWithoutBookingsNestedInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedUpdateWithoutAddOnsInput = {
@@ -13979,6 +14728,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -14176,6 +14926,9 @@ export namespace Prisma {
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type AccountCreateManyUserInput = {
@@ -14210,13 +14963,18 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
+=======
+    notes?: string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateManyPhotographerInput = {
     id?: string
+<<<<<<< HEAD
     createdAt?: Date | string
     updatedAt?: Date | string
     clientId: string
@@ -14254,8 +15012,26 @@ export namespace Prisma {
     bookingId: string
     status: BookingStatus
     notes?: string | null
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
     createdAt?: Date | string
     updatedAt?: Date | string
+    clientId: string
+    status?: BookingStatus
+    packageId: number
+    propertyType: string
+    propertySize: string
+    buildingName: string
+    unitNumber: string
+    floor: string
+    street: string
+    appointmentDate: Date | string
+    timeSlot: string
+    firstName: string
+    lastName: string
+    phoneNumber: string
+    email: string
+    notes?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -14314,6 +15090,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -14322,6 +15099,12 @@ export namespace Prisma {
     package?: PackageUpdateOneRequiredWithoutBookingsNestedInput
     addOns?: AddOnUpdateManyWithoutBookingNestedInput
     payments?: PaymentUpdateManyWithoutBookingNestedInput
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
+    package?: PackageUpdateOneRequiredWithoutBookingsNestedInput
+    addOns?: AddOnUpdateManyWithoutBookingNestedInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedUpdateWithoutClientInput = {
@@ -14343,12 +15126,17 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutBookingNestedInput
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedUpdateManyWithoutBookingsInput = {
@@ -14370,6 +15158,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -14508,6 +15297,77 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BookingUpdateWithoutPhotographerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
+    propertyType?: StringFieldUpdateOperationsInput | string
+    propertySize?: StringFieldUpdateOperationsInput | string
+    buildingName?: StringFieldUpdateOperationsInput | string
+    unitNumber?: StringFieldUpdateOperationsInput | string
+    floor?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    timeSlot?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    client?: UserUpdateOneRequiredWithoutBookingsNestedInput
+    package?: PackageUpdateOneRequiredWithoutBookingsNestedInput
+    addOns?: AddOnUpdateManyWithoutBookingNestedInput
+  }
+
+  export type BookingUncheckedUpdateWithoutPhotographerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
+    packageId?: IntFieldUpdateOperationsInput | number
+    propertyType?: StringFieldUpdateOperationsInput | string
+    propertySize?: StringFieldUpdateOperationsInput | string
+    buildingName?: StringFieldUpdateOperationsInput | string
+    unitNumber?: StringFieldUpdateOperationsInput | string
+    floor?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    timeSlot?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
+  }
+
+  export type BookingUncheckedUpdateManyWithoutAssignedBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    clientId?: StringFieldUpdateOperationsInput | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
+    packageId?: IntFieldUpdateOperationsInput | number
+    propertyType?: StringFieldUpdateOperationsInput | string
+    propertySize?: StringFieldUpdateOperationsInput | string
+    buildingName?: StringFieldUpdateOperationsInput | string
+    unitNumber?: StringFieldUpdateOperationsInput | string
+    floor?: StringFieldUpdateOperationsInput | string
+    street?: StringFieldUpdateOperationsInput | string
+    appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    timeSlot?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingCreateManyPackageInput = {
@@ -14529,9 +15389,13 @@ export namespace Prisma {
     lastName: string
     phoneNumber: string
     email: string
+<<<<<<< HEAD
     additionalDirections?: string | null
     additionalRequests?: string | null
     isPaid?: boolean
+=======
+    notes?: string | null
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUpdateWithoutPackageInput = {
@@ -14551,6 +15415,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -14559,6 +15424,12 @@ export namespace Prisma {
     statusHistories?: BookingStatusHistoryUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUpdateManyWithoutBookingNestedInput
     payments?: PaymentUpdateManyWithoutBookingNestedInput
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    client?: UserUpdateOneRequiredWithoutBookingsNestedInput
+    photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
+    addOns?: AddOnUpdateManyWithoutBookingNestedInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type BookingUncheckedUpdateWithoutPackageInput = {
@@ -14580,6 +15451,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
@@ -14595,6 +15467,10 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+=======
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   }
 
   export type AddOnCreateManyBookingInput = {
@@ -14604,6 +15480,7 @@ export namespace Prisma {
     price: number
   }
 
+<<<<<<< HEAD
   export type PaymentCreateManyBookingInput = {
     id?: string
     createdAt?: Date | string
@@ -14641,6 +15518,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
   export type AddOnUpdateWithoutBookingInput = {
     id?: StringFieldUpdateOperationsInput | string
     addonId?: StringFieldUpdateOperationsInput | string
@@ -14662,6 +15541,7 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
   }
 
+<<<<<<< HEAD
   export type PaymentUpdateWithoutBookingInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14682,6 +15562,8 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | PaymentStatus
   }
 
+=======
+>>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 
 
   /**

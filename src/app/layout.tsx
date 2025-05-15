@@ -1,10 +1,11 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist as GeistSans, Geist_Mono as GeistMono } from "next/font/google";
+
+const geistSans = GeistSans({ subsets: ["latin"], variable: "--font-geist-sans" });
+const geistMono = GeistMono({ subsets: ["latin"], variable: "--font-geist-mono" });
 import SessionProviderWrapper from "../../src/app/sessionproviderwrapper"; // Import the wrapper
 import "./globals.css";
 import { ReactNode } from "react";
 
-const geistSans = Geist({ subsets: ['latin'] });
-const geistMono = Geist_Mono({ subsets: ['latin'] });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
