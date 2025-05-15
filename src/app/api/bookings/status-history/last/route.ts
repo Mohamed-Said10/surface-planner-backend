@@ -30,36 +30,68 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check if the user is a photographer
-    if (user.role !== "PHOTOGRAPHER") {
+    let lastBooking;
+
+    // Handle different user roles
+    if (user.role === "PHOTOGRAPHER") {
+      // For photographers: Find the last booking assigned to them
+      lastBooking = await prisma.booking.findFirst({
+        where: {
+          photographerId: user.id,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      if (!lastBooking) {
+        return NextResponse.json(
+          { error: "No bookings assigned to you" },
+          { status: 404 }
+        );
+      }
+    } else if (user.role === "CLIENT") {
+      // For clients: Find their last booking
+      lastBooking = await prisma.booking.findFirst({
+        where: {
+          clientId: user.id,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      if (!lastBooking) {
+        return NextResponse.json(
+          { error: "You haven't made any bookings yet" },
+          { status: 404 }
+        );
+      }
+    } else if (user.role === "ADMIN") {
+      // For admins: Find the latest booking in the system
+      lastBooking = await prisma.booking.findFirst({
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      if (!lastBooking) {
+        return NextResponse.json(
+          { error: "No bookings found in the system" },
+          { status: 404 }
+        );
+      }
+    } else {
       return NextResponse.json(
-        { error: "Access denied. Only photographers can access this endpoint." },
+        { error: "Unauthorized access: Invalid user role" },
         { status: 403 }
-      );
-    }
-
-    // Find the last booking assigned to this photographer
-    const lastBooking = await prisma.booking.findFirst({
-      where: {
-        photographerId: user.id,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    if (!lastBooking) {
-      return NextResponse.json(
-        { error: "No bookings found for this photographer" },
-        { status: 404 }
       );
     }
 
     // Get the status history for this booking
     const statusHistory = await prisma.bookingStatusHistory.findMany({
       where: { 
-        bookingId: lastBooking.id ,
-        
+        bookingId: lastBooking.id,
       },
       include: {
         user: {
@@ -71,19 +103,18 @@ export async function GET() {
             role: true,
           },
         },
-     
       },
       orderBy: { createdAt: 'desc' },
     });
 
     // Return both the booking details and its status history
     return NextResponse.json({
-    bookingId: lastBooking.id,
-                statusHistory
+      bookingId: lastBooking.id,
+      statusHistory
     });
     
   } catch (error: any) {
-    console.error("Error retrieving photographer's last booking status history:", error);
+    console.error("Error retrieving booking status history:", error);
     return NextResponse.json(
       { error: "Failed to retrieve status history", details: error.message },
       { status: 500 }

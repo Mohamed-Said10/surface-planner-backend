@@ -172,7 +172,6 @@ exports.Prisma.BookingScalarFieldEnum = {
   lastName: 'lastName',
   phoneNumber: 'phoneNumber',
   email: 'email',
-<<<<<<< HEAD
   additionalDirections: 'additionalDirections',
   additionalRequests: 'additionalRequests',
   isPaid: 'isPaid'
@@ -186,9 +185,6 @@ exports.Prisma.BookingStatusHistoryScalarFieldEnum = {
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
-=======
-  notes: 'notes'
->>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 };
 
 exports.Prisma.AddOnScalarFieldEnum = {
@@ -251,13 +247,9 @@ exports.Prisma.ModelName = {
   VerificationToken: 'VerificationToken',
   Package: 'Package',
   Booking: 'Booking',
-<<<<<<< HEAD
   BookingStatusHistory: 'BookingStatusHistory',
   AddOn: 'AddOn',
   Payment: 'Payment'
-=======
-  AddOn: 'AddOn'
->>>>>>> 09e6e728415b2db744e13768d7696e31a61ab4eb
 };
 
 /**
