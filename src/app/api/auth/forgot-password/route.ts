@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const resetUrl = `${process.env.BASE_URL}/auth/reset-password?token=${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,

@@ -2,10 +2,12 @@
 
 import { useState } from "react"
 import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export default function Login() {
   const router = useRouter()
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || null; // Get callbackUrl from query params
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -15,7 +17,7 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
 
-    const res = await signIn("credentials", {
+    const res = await signIn("credentials",{
       email,
       password,
       redirect: false,
@@ -29,7 +31,9 @@ export default function Login() {
 
       console.log("Session data:", session);
       // Redirect based on the user's role
-      if (session?.user?.role === "ADMIN") {
+      if (callbackUrl) {
+        router.push(callbackUrl); // Redirect to the callbackUrl if provided
+      } else if (session?.user?.role === "ADMIN") {
         router.push("../../../pages/dashboard/admin");
       } else if (session?.user?.role === "PHOTOGRAPHER") {
         router.push("../../../pages/dashboard/photographer");
