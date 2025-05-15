@@ -67,25 +67,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // First, ensure the package exists in the database
-    console.log(selectedPackage.id,"selectedPackage.id")
-    let packageData = await prisma.package.findUnique({
-      where: { id: selectedPackage.id }
-    });
 
-    // If package doesn't exist, create it
-    if (!packageData) {
-      packageData = await prisma.package.create({
-        data: {
-          id: selectedPackage.id,
-          name: selectedPackage.name,
-          price: selectedPackage.price,
-          description: selectedPackage.description || "",
-          features: selectedPackage.features || [],
-          pricePerExtra: selectedPackage.pricePerExtra || null,
-        }
-      });
-    }
 
     // Create booking and initial status history in a transaction
     const result = await prisma.$transaction(async (tx) => {
