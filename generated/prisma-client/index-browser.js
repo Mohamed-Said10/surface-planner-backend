@@ -172,7 +172,19 @@ exports.Prisma.BookingScalarFieldEnum = {
   lastName: 'lastName',
   phoneNumber: 'phoneNumber',
   email: 'email',
-  notes: 'notes'
+  additionalDirections: 'additionalDirections',
+  additionalRequests: 'additionalRequests',
+  isPaid: 'isPaid'
+};
+
+exports.Prisma.BookingStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  userId: 'userId',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.AddOnScalarFieldEnum = {
@@ -181,6 +193,17 @@ exports.Prisma.AddOnScalarFieldEnum = {
   addonId: 'addonId',
   name: 'name',
   price: 'price'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  bookingId: 'bookingId',
+  amount: 'amount',
+  paymentMethod: 'paymentMethod',
+  transactionId: 'transactionId',
+  status: 'status'
 };
 
 exports.Prisma.SortOrder = {
@@ -211,13 +234,22 @@ exports.BookingStatus = {
   COMPLETED: 'COMPLETED'
 };
 
+exports.PaymentStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Account: 'Account',
   VerificationToken: 'VerificationToken',
   Package: 'Package',
   Booking: 'Booking',
-  AddOn: 'AddOn'
+  BookingStatusHistory: 'BookingStatusHistory',
+  AddOn: 'AddOn',
+  Payment: 'Payment'
 };
 
 /**

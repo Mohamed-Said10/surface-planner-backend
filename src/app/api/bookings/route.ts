@@ -301,26 +301,6 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-// Define CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "http://localhost:3001", // must match frontend origin
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Credentials": "true", // <== also VERY IMPORTANT
-};
-
-
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      ...corsHeaders,
-      "Access-Control-Allow-Origin": "http://localhost:3001", // your frontend
-      "Access-Control-Allow-Credentials": "true",
-    }    
-  });
-}
-
 export async function POST(req: NextRequest) {
   try {
     // Check authentication
@@ -328,15 +308,13 @@ export async function POST(req: NextRequest) {
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
-        { 
-          status: 401,
-          headers: corsHeaders
-        }
+        { status: 401 }
       );
     }
-
     // Parse request body
     const body = await req.json();
+    console.log(req.body,"request body")
+
     const {
       selectedPackage,
       propertyType,
@@ -372,10 +350,7 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { 
-          status: 400,
-          headers: corsHeaders
-        }
+        { status: 400 }
       );
     }
 
@@ -386,15 +361,11 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { 
-          status: 404,
-          headers: corsHeaders
-        }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // First, ensure the package exists in the database
+    console.log(selectedPackage.id,"selectedPackage.id")
     let packageData = await prisma.package.findUnique({
       where: { id: selectedPackage.id }
     });
@@ -413,53 +384,65 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Create booking in database
-    const booking = await prisma.booking.create({
-      data: {
-        clientId: user.id,
-        packageId: selectedPackage.id,
-        propertyType,
-        propertySize,
-        buildingName,
-        unitNumber,
-        floor,
-        street,
-        appointmentDate: new Date(date),
-        timeSlot,
-        firstName,
-        lastName,
-        phoneNumber,
-        email,
-        status: "BOOKING_CREATED",
-        addOns: {
-          create: addOns.map((addon: any) => ({
-            addonId: addon.id,
-            name: addon.name,
-            price: addon.price,
-          })) || [],
+    // Create booking and initial status history in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create booking in database
+      const booking = await tx.booking.create({
+        data: {
+          clientId: user.id,
+          packageId: selectedPackage.id,
+          propertyType,
+          propertySize,
+          buildingName,
+          unitNumber,
+          floor,
+          street,
+          appointmentDate: new Date(date),
+          timeSlot,
+          firstName,
+          lastName,
+          phoneNumber,
+          email,
+          status: "BOOKING_CREATED",
+          addOns: {
+            create: addOns?.map((addon: any) => ({
+              addonId: addon.id,
+              name: addon.name,
+              price: addon.price,
+            })) || [],
+          },
         },
-      },
-      include: {
-        addOns: true,
-        package: true,
-      },
+        include: {
+          addOns: true,
+          package: true,
+        },
+      });
+
+      // Create initial status history entry
+      const statusHistory = await tx.bookingStatusHistory.create({
+        data: {
+          bookingId: booking.id,
+          userId: user.id,
+          status: "BOOKING_CREATED",
+        }
+      });
+
+      return { booking, statusHistory };
     });
 
     return NextResponse.json(
-      { message: "Booking created successfully", booking },
       { 
-        status: 201,
-        headers: corsHeaders
-      }
+        message: "Booking created successfully", 
+        booking: result.booking,
+        statusHistoryId: result.statusHistory.id 
+      },
+      { status: 201 }
     );
   } catch (error: any) {
     console.error("Error creating booking:", error);
     return NextResponse.json(
       { error: "Failed to create booking", details: error.message },
-      { 
-        status: 500,
-        headers: corsHeaders
-      }
+      { status: 500 }
     );
   }
 }
@@ -471,10 +454,7 @@ export async function GET(req: NextRequest) {
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
-        { 
-          status: 401,
-          headers: corsHeaders
-        }
+        { status: 401 }
       );
     }
 
@@ -484,13 +464,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { 
-          status: 404,
-          headers: corsHeaders
-        }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Get query parameters
@@ -504,13 +478,28 @@ export async function GET(req: NextRequest) {
     const whereClause: any = {};
 
     if (user.role === "CLIENT") {
+      // Clients can only see their own bookings
       whereClause.clientId = user.id;
     } else if (user.role === "PHOTOGRAPHER") {
-      whereClause.photographerId = user.id;
+      // Photographers can see bookings assigned to them AND unassigned bookings with BOOKING_CREATED status
+      whereClause.OR = [
+        { photographerId: user.id },
+        { photographerId: null, status: "BOOKING_CREATED" } // Unassigned bookings
+      ];
     }
+    // Admins can see all bookings
 
+    // Add status filter if provided
     if (status) {
-      whereClause.status = status;
+      // If we already have an OR condition, we need to handle this differently
+      if (whereClause.OR) {
+        whereClause.OR = whereClause.OR.map((condition: any) => ({
+          ...condition,
+          status: status
+        }));
+      } else {
+        whereClause.status = status;
+      }
     }
 
     // Get bookings with pagination
@@ -520,6 +509,20 @@ export async function GET(req: NextRequest) {
         include: {
           addOns: true,
           package: true,
+          statusHistories: {
+            orderBy: { createdAt: 'desc' },
+            take: 5, // Get the last 5 status changes
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstname: true,
+                  lastname: true,
+                  role: true
+                }
+              }
+            }
+          },
           client: {
             select: {
               id: true,
@@ -546,28 +549,20 @@ export async function GET(req: NextRequest) {
       prisma.booking.count({ where: whereClause }),
     ]);
 
-    return NextResponse.json(
-      {
-        bookings,
-        pagination: {
-          total: totalCount,
-          page,
-          limit,
-          pages: Math.ceil(totalCount / limit),
-        },
+    return NextResponse.json({
+      bookings,
+      pagination: {
+        total: totalCount,
+        page,
+        limit,
+        pages: Math.ceil(totalCount / limit),
       },
-      { 
-        headers: corsHeaders
-      }
-    );
+    });
   } catch (error: any) {
     console.error("Error fetching bookings:", error);
     return NextResponse.json(
       { error: "Failed to fetch bookings", details: error.message },
-      { 
-        status: 500,
-        headers: corsHeaders
-      }
+      { status: 500 }
     );
   }
 }

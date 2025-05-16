@@ -1,7 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/prisma-client"
-
+   output   = "../generated/prisma-client"
 }
 
 datasource db {
@@ -28,6 +27,8 @@ model User {
   verificationToken String?
   bookings        Booking[] @relation("ClientBookings")      // Bookings created by this user
   assignedBookings Booking[] @relation("PhotographerBookings") // Bookings assigned to this user (if photographer)
+  payments        Payment[] // Payments made by this user
+  bookingStatusHistories BookingStatusHistory[] // Status changes made by this user
 }
 
 model Account {
@@ -85,6 +86,9 @@ model Booking {
   // Booking details
   status           BookingStatus   @default(BOOKING_CREATED)
   
+  // BookingStatusHistory relation
+  statusHistories  BookingStatusHistory[]
+  
   // Package details
   packageId        Int
   package          Package         @relation(fields: [packageId], references: [id])
@@ -110,8 +114,35 @@ model Booking {
   // Add-ons
   addOns           AddOn[]
   
-  // Additional notes
-  notes            String?
+  additionalDirections String?
+  additionalRequests String?
+
+  // Payment status
+  isPaid           Boolean         @default(false)
+  
+  // Payment relation
+  payments         Payment[]
+}
+
+// New model to track booking status history
+model BookingStatusHistory {
+  id              String          @id @default(uuid())
+  
+  // Booking this status change is associated with
+  bookingId       String
+  booking         Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  // User who changed the status
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  
+  // Status details
+  status          BookingStatus   
+  notes           String?         // Optional notes about the status change
+  
+  // Timestamps
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 model AddOn {
@@ -121,6 +152,32 @@ model AddOn {
   addonId         String
   name            String
   price           Float
+}
+
+model Payment {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  
+  // User who made the payment
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  
+  // Related booking
+  bookingId       String
+  booking         Booking  @relation(fields: [bookingId], references: [id])
+  
+  // Payment details
+  amount          Float
+  paymentMethod   String?
+  transactionId   String?
+  status          PaymentStatus @default(PENDING)
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
 }
 
 enum BookingStatus {
