@@ -2,6 +2,287 @@
 // app/api/bookings/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { createClient } from "@supabase/supabase-js";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+// Initialize Supabase client (adjust env var names if needed)
+const supabase = createClient(
+  process.env.SUPABASE_URL as string,
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+);
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please login first." },
+        { status: 401 }
+      );
+    }
+
+    const userEmail = session.user.email;
+    const { data: user, error: userError } = await supabase
+      .from("User")
+      .select("*")
+      .eq("email", userEmail)
+      .single();
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const bookingId = params.id;
+
+    // Fetch booking with related addOns, client, photographer
+    const { data: booking, error: bookingError } = await supabase
+      .from("Booking")
+      .select(`
+        *,
+        addOns: AddOn(*),
+        client: User!clientId(id, firstname, lastname, email),
+        photographer: User!photographerId(id, firstname, lastname, email)
+      `)
+      .eq("id", bookingId)
+      .single();
+
+    if (bookingError || !booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    // Permission checks
+    if (
+      user.role === "CLIENT" &&
+      booking.clientId !== user.id
+    ) {
+      return NextResponse.json(
+        { error: "You don't have permission to view this booking" },
+        { status: 403 }
+      );
+    }
+
+    if (
+      user.role === "PHOTOGRAPHER" &&
+      booking.photographerId !== user.id
+    ) {
+      return NextResponse.json(
+        { error: "You don't have permission to view this booking" },
+        { status: 403 }
+      );
+    }
+
+    return NextResponse.json(booking);
+  } catch (error: any) {
+    console.error("Error fetching booking:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch booking", details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please login first." },
+        { status: 401 }
+      );
+    }
+
+    const userEmail = session.user.email;
+    const { data: user, error: userError } = await supabase
+      .from("User")
+      .select("*")
+      .eq("email", userEmail)
+      .single();
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const bookingId = params.id;
+    const body = await req.json();
+
+    // Get existing booking
+    const { data: existingBooking, error: bookingError } = await supabase
+      .from("Booking")
+      .select("*")
+      .eq("id", bookingId)
+      .single();
+
+    if (bookingError || !existingBooking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    // Permission validation
+    if (user.role === "CLIENT") {
+      if (existingBooking.clientId !== user.id) {
+        return NextResponse.json(
+          { error: "You don't have permission to update this booking" },
+          { status: 403 }
+        );
+      }
+      if (existingBooking.status !== "BOOKING_CREATED") {
+        return NextResponse.json(
+          { error: "Cannot modify booking after photographer assignment" },
+          { status: 403 }
+        );
+      }
+    } else if (user.role === "PHOTOGRAPHER") {
+      if (existingBooking.photographerId !== user.id) {
+        return NextResponse.json(
+          { error: "You don't have permission to update this booking" },
+          { status: 403 }
+        );
+      }
+      const allowedFields = ["status"];
+      const requestedFields = Object.keys(body);
+      if (!requestedFields.every(field => allowedFields.includes(field))) {
+        return NextResponse.json(
+          { error: "Photographers can only update the booking status" },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Validate status transitions
+    if (body.status) {
+      const validTransitions: Record<string, string[]> = {
+        "BOOKING_CREATED": ["PHOTOGRAPHER_ASSIGNED"],
+        "PHOTOGRAPHER_ASSIGNED": ["SHOOTING"],
+        "SHOOTING": ["EDITING"],
+        "EDITING": ["COMPLETED"],
+      };
+      if (!validTransitions[existingBooking.status]?.includes(body.status)) {
+        return NextResponse.json(
+          {
+            error: `Invalid status transition from ${existingBooking.status} to ${body.status}`,
+            validTransitions: validTransitions[existingBooking.status],
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Update booking (Supabase update requires `.update()` then `.eq()` then `.select()`)
+    const { data: updatedBooking, error: updateError } = await supabase
+      .from("Booking")
+      .update(body)
+      .eq("id", bookingId)
+      .select(`
+        *,
+        addOns: AddOn(*),
+        client: User!clientId(id, firstname, lastname, email),
+        photographer: User!photographerId(id, firstname, lastname, email)
+      `)
+      .single();
+
+    if (updateError || !updatedBooking) {
+      return NextResponse.json(
+        { error: "Failed to update booking", details: updateError?.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(updatedBooking);
+  } catch (error: any) {
+    console.error("Error updating booking:", error);
+    return NextResponse.json(
+      { error: "Failed to update booking", details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please login first." },
+        { status: 401 }
+      );
+    }
+
+    const userEmail = session.user.email;
+    const { data: user, error: userError } = await supabase
+      .from("User")
+      .select("*")
+      .eq("email", userEmail)
+      .single();
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const bookingId = params.id;
+
+    // Get existing booking
+    const { data: existingBooking, error: bookingError } = await supabase
+      .from("Booking")
+      .select("*")
+      .eq("id", bookingId)
+      .single();
+
+    if (bookingError || !existingBooking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    // Check delete permissions
+    if (
+      (user.role === "CLIENT" &&
+        existingBooking.clientId === user.id &&
+        existingBooking.status === "BOOKING_CREATED") ||
+      user.role === "ADMIN"
+    ) {
+      // Delete booking and related add-ons (should cascade if FK ON DELETE CASCADE)
+      const { error: deleteError } = await supabase
+        .from("Booking")
+        .delete()
+        .eq("id", bookingId);
+
+      if (deleteError) {
+        return NextResponse.json(
+          { error: "Failed to delete booking", details: deleteError.message },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({ message: "Booking deleted successfully" });
+    } else {
+      return NextResponse.json(
+        { error: "You don't have permission to delete this booking" },
+        { status: 403 }
+      );
+    }
+  } catch (error: any) {
+    console.error("Error deleting booking:", error);
+    return NextResponse.json(
+      { error: "Failed to delete booking", details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+
+/*
+// eslint-disable @typescript-eslint/no-explicit-any 
+// app/api/bookings/[id]/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -282,3 +563,4 @@ export async function DELETE(
     );
   }
 }
+*/
