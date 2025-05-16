@@ -245,7 +245,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\admin\\Desktop\\backend-surface\\planner-back-end\\generated\\prisma-client",
+      "value": "C:\\Users\\admin\\Desktop\\Projects\\Surface Planner\\surface-planner6.2\\surface-planner\\generated\\prisma-client",
       "fromEnvVar": null
     },
     "config": {

@@ -106,9 +106,10 @@ export async function PUT(request: NextRequest) {
 
     const formData = await request.formData();
 
-    const updateData: any = {
+    const updateData = {
       firstname: formData.get("firstname") as string,
       lastname: formData.get("lastname") as string,
+      image: formData.get("image") as string,
       address: formData.get("address") as string,
       city: formData.get("city") as string,
       state: formData.get("state") as string,
@@ -297,7 +298,7 @@ export async function PUT(
     const updateData: any = {
       firstname: formData.get('firstname') as string,
       lastname: formData.get('lastname') as string,
-      // email: formData.get('email') as string,
+      //email: formData.get('email') as string,
       address: formData.get('address') as string,
       city: formData.get('city') as string,
       state: formData.get('state') as string,

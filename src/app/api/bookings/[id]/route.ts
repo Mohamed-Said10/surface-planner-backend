@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
+// eslint-disable @typescript-eslint/no-explicit-any 
 // app/api/bookings/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
@@ -274,6 +275,8 @@ export async function DELETE(
     );
   }
 }
+
+
 
 
 
@@ -563,4 +566,4 @@ export async function DELETE(
     );
   }
 }
-*/
+/*
