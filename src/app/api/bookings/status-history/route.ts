@@ -87,7 +87,7 @@ export async function GET() {
     });
 
     // Group the bookings by status for easy filtering on the front-end
-    const bookingsByStatus = {
+    const bookingsByStatus: Record<string, typeof photographerBookings> = {
       BOOKING_CREATED: [],
       PHOTOGRAPHER_ASSIGNED: [],
       SHOOTING: [],
@@ -96,7 +96,6 @@ export async function GET() {
     };
 
     photographerBookings.forEach(booking => {
-      // @ts-ignore - We know these statuses exist based on the enum
       bookingsByStatus[booking.status].push(booking);
     });
 

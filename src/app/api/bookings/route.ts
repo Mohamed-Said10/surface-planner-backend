@@ -6,7 +6,6 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(req: NextRequest) {
   try {
-    // Check authentication
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json(
@@ -18,44 +17,48 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     console.log(req.body,"request body")
 
-    const {
-      selectedPackage,
-      propertyType,
-      propertySize,
-      buildingName,
-      unitNumber,
-      floor,
-      street,
-      addOns,
-      date,
-      timeSlot,
-      firstName,
-      lastName,
-      phoneNumber,
-      email,
-    } = body;
+  const {
+  selectedPackage,
+  propertyType,
+  propertySize,
+  street,
+  date,
+  timeSlot,
+  firstName,
+  lastName,
+  phoneNumber,
+  email,
+  addOns, // now required
 
-    // Validate required fields
-    if (
-      !selectedPackage ||
-      !propertyType ||
-      !propertySize ||
-      !buildingName ||
-      !unitNumber ||
-      !floor ||
-      !street ||
-      !date ||
-      !timeSlot ||
-      !firstName ||
-      !lastName ||
-      !phoneNumber ||
-      !email
-    ) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
+  // Optional fields
+  buildingName,
+  unitNumber,
+  floor,
+  villaNumber,
+  company,
+  additionalInfo,
+  additionalRequests,
+} = body;
+
+// Validate only required fields
+if (
+  !selectedPackage ||
+  !propertyType ||
+  !propertySize ||
+  !street ||
+  !date ||
+  !timeSlot ||
+  !firstName ||
+  !lastName ||
+  !phoneNumber ||
+  !email ||
+  !addOns
+) {
+  return NextResponse.json(
+    { error: "Missing required fields" },
+    { status: 400 }
+  );
+}
 
     // Get client information from session
     const userEmail = session.user.email;
@@ -107,6 +110,10 @@ export async function POST(req: NextRequest) {
           phoneNumber,
           email,
           status: "BOOKING_CREATED",
+          villaNumber,
+          company,
+          additionalInfo,
+          additionalRequests,
           addOns: {
             create: addOns?.map((addon: any) => ({
               addonId: addon.id,
@@ -163,6 +170,7 @@ export async function GET(req: NextRequest) {
 
     const userEmail = session.user.email;
     const user = await prisma.user.findUnique({
+   
       where: { email: userEmail as string },
     });
 

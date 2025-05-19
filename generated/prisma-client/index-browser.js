@@ -165,7 +165,9 @@ exports.Prisma.BookingScalarFieldEnum = {
   buildingName: 'buildingName',
   unitNumber: 'unitNumber',
   floor: 'floor',
+  villaNumber: 'villaNumber',
   street: 'street',
+  company: 'company',
   appointmentDate: 'appointmentDate',
   timeSlot: 'timeSlot',
   firstName: 'firstName',
@@ -174,6 +176,7 @@ exports.Prisma.BookingScalarFieldEnum = {
   email: 'email',
   additionalDirections: 'additionalDirections',
   additionalRequests: 'additionalRequests',
+  additionalInfo: 'additionalInfo',
   isPaid: 'isPaid'
 };
 
