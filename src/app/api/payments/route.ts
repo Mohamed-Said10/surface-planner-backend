@@ -1,4 +1,173 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // must be a secure server-side key
+);
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { bookingId, amount, paymentMethod = "Credit Card" } = await req.json();
+
+    if (!bookingId || !amount) {
+      return NextResponse.json(
+        { error: "Missing required fields: bookingId and amount" },
+        { status: 400 }
+      );
+    }
+
+    const { data: user, error: userError } = await supabase
+      .from("User")
+      .select("*")
+      .eq("email", session.user.email)
+      .single();
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const { data: booking, error: bookingError } = await supabase
+      .from("Booking")
+      .select(`
+        *,
+        addOns(*),
+        packages(*)
+      `)
+      .eq("id", bookingId)
+      .single();
+      console.log("booking", booking);
+      
+
+    if (bookingError || !booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    if (booking.client_id !== user.id && user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const addOnTotal = booking.add_ons?.reduce((sum: number, addon: any) => sum + addon.price, 0) || 0;
+    const totalBookingAmount = parseFloat((booking.packages.price + addOnTotal).toFixed(2));
+    const receivedAmount = parseFloat(parseFloat(amount).toFixed(2));
+
+    if (Math.abs(receivedAmount - totalBookingAmount) > 0.01) {
+      return NextResponse.json(
+        {
+          error: "Payment amount doesn't match booking total",
+          expected: totalBookingAmount,
+          received: receivedAmount,
+        },
+        { status: 400 }
+      );
+    }
+
+    const transactionId = `TXN-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    const { data: payment, error: paymentError } = await supabase
+      .from("Payment")
+      .insert({
+        user_id: user.id,
+        booking_id: booking.id,
+        amount: receivedAmount,
+        payment_method: paymentMethod,
+        transaction_id: transactionId,
+        status: "COMPLETED",
+      })
+      .select()
+      .single();
+
+    if (paymentError) throw paymentError;
+
+    const { error: updateError } = await supabase
+      .from("Booking")
+      .update({ is_paid: true })
+      .eq("id", bookingId);
+
+    if (updateError) throw updateError;
+
+    return NextResponse.json(
+      { message: "Payment processed", payment, transactionId },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    console.error("Error processing payment:", error);
+    return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const bookingId = new URL(req.url).searchParams.get("bookingId")?.replace(/"/g, "");
+
+    if (!bookingId) {
+      return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
+    }
+
+    const { data: user, error: userError } = await supabase
+      .from("User")
+      .select("*")
+      .eq("email", session.user.email)
+      .single();
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const { data: booking, error: bookingError } = await supabase
+      .from("Booking")
+      .select(`
+        *,
+        addOns(*),
+        packages(*),
+        payments(*)
+      `)
+      .eq("id", bookingId)
+      .single();
+
+    if (bookingError || !booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    if (booking.client_id !== user.id && user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const totalAmount = booking.packages.price +
+      booking.add_ons.reduce((sum: number, addon: any) => sum + addon.price, 0);
+
+    return NextResponse.json({
+      booking,
+      totalAmount,
+      isPaid: booking.is_paid,
+      payments: booking.payments,
+    });
+  } catch (error: any) {
+    console.error("Error fetching payments:", error);
+    return NextResponse.json({ error: "Failed to fetch payment", details: error.message }, { status: 500 });
+  }
+}
+
+
+
+
+
+
+
+/*
+// eslint-disable @typescript-eslint/no-explicit-any 
 // File: app/api/payments/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
@@ -204,3 +373,4 @@ console.log("Received bookingId:", bookingId); // Add this in your GET handler
     );
   }
 }
+  */
