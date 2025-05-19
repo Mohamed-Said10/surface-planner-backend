@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // eslint-disable @typescript-eslint/no-explicit-any 
 // app/api/bookings/[id]/route.ts
@@ -448,8 +450,12 @@ export async function PUT(
       }
     }
 
+    // Track if status is being updated to create history entry
+    const isStatusBeingUpdated = body.status && body.status !== existingBooking.status;
+    let statusNotes = "";
+
     // Handle status updates
-    if (body.status) {
+    if (isStatusBeingUpdated) {
       // Validate status transitions
       const validTransitions: Record<string, string[]> = {
         "BOOKING_CREATED": ["PHOTOGRAPHER_ASSIGNED"],
@@ -469,34 +475,91 @@ export async function PUT(
           { status: 400 }
         );
       }
+      
+      // Create appropriate notes based on the status change
+      switch(body.status) {
+        case "SHOOTING":
+          statusNotes = "Photographer has started the photoshoot";
+          break;
+        case "EDITING":
+          statusNotes = "Photoshoot completed, now in editing phase";
+          break;
+        case "COMPLETED":
+          statusNotes = "Editing completed, booking finalized";
+          break;
+        default:
+          statusNotes = `Status changed from ${existingBooking.status} to ${body.status}`;
+      }
     }
 
-    // Update booking
-    const updatedBooking = await prisma.booking.update({
-      where: { id: bookingId },
-      data: body,
-      include: {
-        addOns: true,
-        client: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
+    // Use transaction if status is being updated to ensure both operations complete
+    if (isStatusBeingUpdated) {
+      const [updatedBooking, _] = await prisma.$transaction([
+        // 1. Update the booking
+        prisma.booking.update({
+          where: { id: bookingId },
+          data: body,
+          include: {
+            addOns: true,
+            client: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                email: true,
+              },
+            },
+            photographer: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                email: true,
+              },
+            },
+          },
+        }),
+        
+        // 2. Create booking status history entry
+        prisma.bookingStatusHistory.create({
+          data: {
+            bookingId,
+            userId: user.id, // Current user (admin or photographer) who made the change
+            status: body.status,
+            notes: statusNotes
+          }
+        })
+      ]);
+      
+      return NextResponse.json(updatedBooking);
+    } else {
+      // If no status change, just update the booking without creating history
+      const updatedBooking = await prisma.booking.update({
+        where: { id: bookingId },
+        data: body,
+        include: {
+          addOns: true,
+          client: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              email: true,
+            },
+          },
+          photographer: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              email: true,
+            },
           },
         },
-        photographer: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
-          },
-        },
-      },
-    });
-
-    return NextResponse.json(updatedBooking);
+      });
+      
+      return NextResponse.json(updatedBooking);
+    }
   } catch (error: any) {
     console.error("Error updating booking:", error);
     return NextResponse.json(

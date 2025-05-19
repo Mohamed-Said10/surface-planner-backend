@@ -71,57 +71,48 @@ model Package {
 }
 
 model Booking {
-  id               String          @id @default(uuid())
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  id                    String          @id @default(uuid())
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
   
-  // Client who created the booking
-  clientId         String
-  client           User            @relation("ClientBookings", fields: [clientId], references: [id])
+  clientId              String
+  client                User            @relation("ClientBookings", fields: [clientId], references: [id])
   
-  // Photographer assigned to this booking (optional)
-  photographerId   String?
-  photographer     User?           @relation("PhotographerBookings", fields: [photographerId], references: [id])
+  photographerId        String?
+  photographer          User?           @relation("PhotographerBookings", fields: [photographerId], references: [id])
   
-  // Booking details
-  status           BookingStatus   @default(BOOKING_CREATED)
+  status                BookingStatus   @default(BOOKING_CREATED)
+  statusHistories       BookingStatusHistory[]
   
-  // BookingStatusHistory relation
-  statusHistories  BookingStatusHistory[]
+  packageId             Int
+  package               Package         @relation(fields: [packageId], references: [id])
   
-  // Package details
-  packageId        Int
-  package          Package         @relation(fields: [packageId], references: [id])
+  propertyType          String
+  propertySize          String
+  buildingName          String?         // 👈 اختياري
+  unitNumber            String?         // 👈 اختياري
+  floor                 String?         // 👈 اختياري
+  villaNumber           String?         // 👈 جديد واختياري
+  street                String
+  company               String?         // 👈 جديد واختياري
   
-  // Property details
-  propertyType     String
-  propertySize     String
-  buildingName     String
-  unitNumber       String
-  floor            String
-  street           String
+  appointmentDate       DateTime
+  timeSlot              String
   
-  // Selected date and time
-  appointmentDate  DateTime
-  timeSlot         String
-  
-  // Client contact details
-  firstName        String
-  lastName         String
-  phoneNumber      String
-  email            String
-  
-  // Add-ons
-  addOns           AddOn[]
-  
-  additionalDirections String?
-  additionalRequests String?
+  firstName             String
+  lastName              String
+  phoneNumber           String
+  email                 String
 
-  // Payment status
-  isPaid           Boolean         @default(false)
+  addOns                AddOn[]         // إجباري ✅
   
-  // Payment relation
-  payments         Payment[]
+  additionalDirections  String?         // 👈 إذا بغيت تبقي عليه
+  additionalRequests    String?
+  additionalInfo        String?         // 👈 جديد واختياري
+
+  isPaid                Boolean         @default(false)
+  
+  payments              Payment[]
 }
 
 // New model to track booking status history

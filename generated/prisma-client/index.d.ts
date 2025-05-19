@@ -129,10 +129,12 @@ export type BookingPayload<ExtArgs extends $Extensions.Args = $Extensions.Defaul
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName: string | null
+    unitNumber: string | null
+    floor: string | null
+    villaNumber: string | null
     street: string
+    company: string | null
     appointmentDate: Date
     timeSlot: string
     firstName: string
@@ -141,6 +143,7 @@ export type BookingPayload<ExtArgs extends $Extensions.Args = $Extensions.Defaul
     email: string
     additionalDirections: string | null
     additionalRequests: string | null
+    additionalInfo: string | null
     isPaid: boolean
   }, ExtArgs["result"]["booking"]>
   composites: {}
@@ -5870,7 +5873,9 @@ export namespace Prisma {
     buildingName: string | null
     unitNumber: string | null
     floor: string | null
+    villaNumber: string | null
     street: string | null
+    company: string | null
     appointmentDate: Date | null
     timeSlot: string | null
     firstName: string | null
@@ -5879,6 +5884,7 @@ export namespace Prisma {
     email: string | null
     additionalDirections: string | null
     additionalRequests: string | null
+    additionalInfo: string | null
     isPaid: boolean | null
   }
 
@@ -5895,7 +5901,9 @@ export namespace Prisma {
     buildingName: string | null
     unitNumber: string | null
     floor: string | null
+    villaNumber: string | null
     street: string | null
+    company: string | null
     appointmentDate: Date | null
     timeSlot: string | null
     firstName: string | null
@@ -5904,6 +5912,7 @@ export namespace Prisma {
     email: string | null
     additionalDirections: string | null
     additionalRequests: string | null
+    additionalInfo: string | null
     isPaid: boolean | null
   }
 
@@ -5920,7 +5929,9 @@ export namespace Prisma {
     buildingName: number
     unitNumber: number
     floor: number
+    villaNumber: number
     street: number
+    company: number
     appointmentDate: number
     timeSlot: number
     firstName: number
@@ -5929,6 +5940,7 @@ export namespace Prisma {
     email: number
     additionalDirections: number
     additionalRequests: number
+    additionalInfo: number
     isPaid: number
     _all: number
   }
@@ -5955,7 +5967,9 @@ export namespace Prisma {
     buildingName?: true
     unitNumber?: true
     floor?: true
+    villaNumber?: true
     street?: true
+    company?: true
     appointmentDate?: true
     timeSlot?: true
     firstName?: true
@@ -5964,6 +5978,7 @@ export namespace Prisma {
     email?: true
     additionalDirections?: true
     additionalRequests?: true
+    additionalInfo?: true
     isPaid?: true
   }
 
@@ -5980,7 +5995,9 @@ export namespace Prisma {
     buildingName?: true
     unitNumber?: true
     floor?: true
+    villaNumber?: true
     street?: true
+    company?: true
     appointmentDate?: true
     timeSlot?: true
     firstName?: true
@@ -5989,6 +6006,7 @@ export namespace Prisma {
     email?: true
     additionalDirections?: true
     additionalRequests?: true
+    additionalInfo?: true
     isPaid?: true
   }
 
@@ -6005,7 +6023,9 @@ export namespace Prisma {
     buildingName?: true
     unitNumber?: true
     floor?: true
+    villaNumber?: true
     street?: true
+    company?: true
     appointmentDate?: true
     timeSlot?: true
     firstName?: true
@@ -6014,6 +6034,7 @@ export namespace Prisma {
     email?: true
     additionalDirections?: true
     additionalRequests?: true
+    additionalInfo?: true
     isPaid?: true
     _all?: true
   }
@@ -6115,10 +6136,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName: string | null
+    unitNumber: string | null
+    floor: string | null
+    villaNumber: string | null
     street: string
+    company: string | null
     appointmentDate: Date
     timeSlot: string
     firstName: string
@@ -6127,6 +6150,7 @@ export namespace Prisma {
     email: string
     additionalDirections: string | null
     additionalRequests: string | null
+    additionalInfo: string | null
     isPaid: boolean
     _count: BookingCountAggregateOutputType | null
     _avg: BookingAvgAggregateOutputType | null
@@ -6162,7 +6186,9 @@ export namespace Prisma {
     buildingName?: boolean
     unitNumber?: boolean
     floor?: boolean
+    villaNumber?: boolean
     street?: boolean
+    company?: boolean
     appointmentDate?: boolean
     timeSlot?: boolean
     firstName?: boolean
@@ -6171,6 +6197,7 @@ export namespace Prisma {
     email?: boolean
     additionalDirections?: boolean
     additionalRequests?: boolean
+    additionalInfo?: boolean
     isPaid?: boolean
     client?: boolean | UserArgs<ExtArgs>
     photographer?: boolean | UserArgs<ExtArgs>
@@ -6194,7 +6221,9 @@ export namespace Prisma {
     buildingName?: boolean
     unitNumber?: boolean
     floor?: boolean
+    villaNumber?: boolean
     street?: boolean
+    company?: boolean
     appointmentDate?: boolean
     timeSlot?: boolean
     firstName?: boolean
@@ -6203,6 +6232,7 @@ export namespace Prisma {
     email?: boolean
     additionalDirections?: boolean
     additionalRequests?: boolean
+    additionalInfo?: boolean
     isPaid?: boolean
   }
 
@@ -10011,7 +10041,9 @@ export namespace Prisma {
     buildingName: 'buildingName',
     unitNumber: 'unitNumber',
     floor: 'floor',
+    villaNumber: 'villaNumber',
     street: 'street',
+    company: 'company',
     appointmentDate: 'appointmentDate',
     timeSlot: 'timeSlot',
     firstName: 'firstName',
@@ -10020,6 +10052,7 @@ export namespace Prisma {
     email: 'email',
     additionalDirections: 'additionalDirections',
     additionalRequests: 'additionalRequests',
+    additionalInfo: 'additionalInfo',
     isPaid: 'isPaid'
   };
 
@@ -10367,10 +10400,12 @@ export namespace Prisma {
     packageId?: IntFilter | number
     propertyType?: StringFilter | string
     propertySize?: StringFilter | string
-    buildingName?: StringFilter | string
-    unitNumber?: StringFilter | string
-    floor?: StringFilter | string
+    buildingName?: StringNullableFilter | string | null
+    unitNumber?: StringNullableFilter | string | null
+    floor?: StringNullableFilter | string | null
+    villaNumber?: StringNullableFilter | string | null
     street?: StringFilter | string
+    company?: StringNullableFilter | string | null
     appointmentDate?: DateTimeFilter | Date | string
     timeSlot?: StringFilter | string
     firstName?: StringFilter | string
@@ -10379,6 +10414,7 @@ export namespace Prisma {
     email?: StringFilter | string
     additionalDirections?: StringNullableFilter | string | null
     additionalRequests?: StringNullableFilter | string | null
+    additionalInfo?: StringNullableFilter | string | null
     isPaid?: BoolFilter | boolean
     client?: XOR<UserRelationFilter, UserWhereInput>
     photographer?: XOR<UserRelationFilter, UserWhereInput> | null
@@ -10398,10 +10434,12 @@ export namespace Prisma {
     packageId?: SortOrder
     propertyType?: SortOrder
     propertySize?: SortOrder
-    buildingName?: SortOrder
-    unitNumber?: SortOrder
-    floor?: SortOrder
+    buildingName?: SortOrderInput | SortOrder
+    unitNumber?: SortOrderInput | SortOrder
+    floor?: SortOrderInput | SortOrder
+    villaNumber?: SortOrderInput | SortOrder
     street?: SortOrder
+    company?: SortOrderInput | SortOrder
     appointmentDate?: SortOrder
     timeSlot?: SortOrder
     firstName?: SortOrder
@@ -10410,6 +10448,7 @@ export namespace Prisma {
     email?: SortOrder
     additionalDirections?: SortOrderInput | SortOrder
     additionalRequests?: SortOrderInput | SortOrder
+    additionalInfo?: SortOrderInput | SortOrder
     isPaid?: SortOrder
     client?: UserOrderByWithRelationInput
     photographer?: UserOrderByWithRelationInput
@@ -10433,10 +10472,12 @@ export namespace Prisma {
     packageId?: SortOrder
     propertyType?: SortOrder
     propertySize?: SortOrder
-    buildingName?: SortOrder
-    unitNumber?: SortOrder
-    floor?: SortOrder
+    buildingName?: SortOrderInput | SortOrder
+    unitNumber?: SortOrderInput | SortOrder
+    floor?: SortOrderInput | SortOrder
+    villaNumber?: SortOrderInput | SortOrder
     street?: SortOrder
+    company?: SortOrderInput | SortOrder
     appointmentDate?: SortOrder
     timeSlot?: SortOrder
     firstName?: SortOrder
@@ -10445,6 +10486,7 @@ export namespace Prisma {
     email?: SortOrder
     additionalDirections?: SortOrderInput | SortOrder
     additionalRequests?: SortOrderInput | SortOrder
+    additionalInfo?: SortOrderInput | SortOrder
     isPaid?: SortOrder
     _count?: BookingCountOrderByAggregateInput
     _avg?: BookingAvgOrderByAggregateInput
@@ -10466,10 +10508,12 @@ export namespace Prisma {
     packageId?: IntWithAggregatesFilter | number
     propertyType?: StringWithAggregatesFilter | string
     propertySize?: StringWithAggregatesFilter | string
-    buildingName?: StringWithAggregatesFilter | string
-    unitNumber?: StringWithAggregatesFilter | string
-    floor?: StringWithAggregatesFilter | string
+    buildingName?: StringNullableWithAggregatesFilter | string | null
+    unitNumber?: StringNullableWithAggregatesFilter | string | null
+    floor?: StringNullableWithAggregatesFilter | string | null
+    villaNumber?: StringNullableWithAggregatesFilter | string | null
     street?: StringWithAggregatesFilter | string
+    company?: StringNullableWithAggregatesFilter | string | null
     appointmentDate?: DateTimeWithAggregatesFilter | Date | string
     timeSlot?: StringWithAggregatesFilter | string
     firstName?: StringWithAggregatesFilter | string
@@ -10478,6 +10522,7 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter | string
     additionalDirections?: StringNullableWithAggregatesFilter | string | null
     additionalRequests?: StringNullableWithAggregatesFilter | string | null
+    additionalInfo?: StringNullableWithAggregatesFilter | string | null
     isPaid?: BoolWithAggregatesFilter | boolean
   }
 
@@ -11006,10 +11051,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -11018,6 +11065,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     client: UserCreateNestedOneWithoutBookingsInput
     photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
@@ -11037,10 +11085,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -11049,6 +11099,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
@@ -11062,10 +11113,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -11074,6 +11127,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     client?: UserUpdateOneRequiredWithoutBookingsNestedInput
     photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
@@ -11093,10 +11147,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -11105,6 +11161,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
@@ -11121,10 +11178,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -11133,6 +11192,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
   }
 
@@ -11143,10 +11203,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -11155,6 +11217,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -11168,10 +11231,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -11180,6 +11245,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -11889,7 +11955,9 @@ export namespace Prisma {
     buildingName?: SortOrder
     unitNumber?: SortOrder
     floor?: SortOrder
+    villaNumber?: SortOrder
     street?: SortOrder
+    company?: SortOrder
     appointmentDate?: SortOrder
     timeSlot?: SortOrder
     firstName?: SortOrder
@@ -11898,6 +11966,7 @@ export namespace Prisma {
     email?: SortOrder
     additionalDirections?: SortOrder
     additionalRequests?: SortOrder
+    additionalInfo?: SortOrder
     isPaid?: SortOrder
   }
 
@@ -11918,7 +11987,9 @@ export namespace Prisma {
     buildingName?: SortOrder
     unitNumber?: SortOrder
     floor?: SortOrder
+    villaNumber?: SortOrder
     street?: SortOrder
+    company?: SortOrder
     appointmentDate?: SortOrder
     timeSlot?: SortOrder
     firstName?: SortOrder
@@ -11927,6 +11998,7 @@ export namespace Prisma {
     email?: SortOrder
     additionalDirections?: SortOrder
     additionalRequests?: SortOrder
+    additionalInfo?: SortOrder
     isPaid?: SortOrder
   }
 
@@ -11943,7 +12015,9 @@ export namespace Prisma {
     buildingName?: SortOrder
     unitNumber?: SortOrder
     floor?: SortOrder
+    villaNumber?: SortOrder
     street?: SortOrder
+    company?: SortOrder
     appointmentDate?: SortOrder
     timeSlot?: SortOrder
     firstName?: SortOrder
@@ -11952,6 +12026,7 @@ export namespace Prisma {
     email?: SortOrder
     additionalDirections?: SortOrder
     additionalRequests?: SortOrder
+    additionalInfo?: SortOrder
     isPaid?: SortOrder
   }
 
@@ -13008,10 +13083,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -13020,6 +13097,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
     statusHistories?: BookingStatusHistoryCreateNestedManyWithoutBookingInput
@@ -13037,10 +13115,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -13049,6 +13129,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
@@ -13072,10 +13153,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -13084,6 +13167,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     client: UserCreateNestedOneWithoutBookingsInput
     statusHistories?: BookingStatusHistoryCreateNestedManyWithoutBookingInput
@@ -13101,10 +13185,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -13113,6 +13199,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
@@ -13249,10 +13336,12 @@ export namespace Prisma {
     packageId?: IntFilter | number
     propertyType?: StringFilter | string
     propertySize?: StringFilter | string
-    buildingName?: StringFilter | string
-    unitNumber?: StringFilter | string
-    floor?: StringFilter | string
+    buildingName?: StringNullableFilter | string | null
+    unitNumber?: StringNullableFilter | string | null
+    floor?: StringNullableFilter | string | null
+    villaNumber?: StringNullableFilter | string | null
     street?: StringFilter | string
+    company?: StringNullableFilter | string | null
     appointmentDate?: DateTimeFilter | Date | string
     timeSlot?: StringFilter | string
     firstName?: StringFilter | string
@@ -13261,6 +13350,7 @@ export namespace Prisma {
     email?: StringFilter | string
     additionalDirections?: StringNullableFilter | string | null
     additionalRequests?: StringNullableFilter | string | null
+    additionalInfo?: StringNullableFilter | string | null
     isPaid?: BoolFilter | boolean
   }
 
@@ -13444,10 +13534,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -13456,6 +13548,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     client: UserCreateNestedOneWithoutBookingsInput
     photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
@@ -13473,10 +13566,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -13485,6 +13580,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
@@ -13905,10 +14001,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -13917,6 +14015,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     client: UserCreateNestedOneWithoutBookingsInput
     photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
@@ -13935,10 +14034,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -13947,6 +14048,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
     payments?: PaymentUncheckedCreateNestedManyWithoutBookingInput
@@ -14018,10 +14120,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14030,6 +14134,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     client?: UserUpdateOneRequiredWithoutBookingsNestedInput
     photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
@@ -14048,10 +14153,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14060,6 +14167,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutBookingNestedInput
@@ -14121,10 +14229,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -14133,6 +14243,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     client: UserCreateNestedOneWithoutBookingsInput
     photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
@@ -14151,10 +14262,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -14163,6 +14276,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     payments?: PaymentUncheckedCreateNestedManyWithoutBookingInput
@@ -14185,10 +14299,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14197,6 +14313,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     client?: UserUpdateOneRequiredWithoutBookingsNestedInput
     photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
@@ -14215,10 +14332,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14227,6 +14346,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutBookingNestedInput
@@ -14288,10 +14408,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -14300,6 +14422,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     client: UserCreateNestedOneWithoutBookingsInput
     photographer?: UserCreateNestedOneWithoutAssignedBookingsInput
@@ -14318,10 +14441,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -14330,6 +14455,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
     statusHistories?: BookingStatusHistoryUncheckedCreateNestedManyWithoutBookingInput
     addOns?: AddOnUncheckedCreateNestedManyWithoutBookingInput
@@ -14401,10 +14527,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14413,6 +14541,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     client?: UserUpdateOneRequiredWithoutBookingsNestedInput
     photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
@@ -14431,10 +14560,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14443,6 +14574,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
@@ -14470,10 +14602,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -14482,6 +14616,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
   }
 
@@ -14494,10 +14629,12 @@ export namespace Prisma {
     packageId: number
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -14506,6 +14643,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
   }
 
@@ -14574,10 +14712,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14586,6 +14726,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
     statusHistories?: BookingStatusHistoryUpdateManyWithoutBookingNestedInput
@@ -14603,10 +14744,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14615,6 +14758,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
@@ -14630,10 +14774,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14642,6 +14788,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -14652,10 +14799,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14664,6 +14813,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     client?: UserUpdateOneRequiredWithoutBookingsNestedInput
     statusHistories?: BookingStatusHistoryUpdateManyWithoutBookingNestedInput
@@ -14681,10 +14831,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14693,6 +14845,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput
@@ -14708,10 +14861,12 @@ export namespace Prisma {
     packageId?: IntFieldUpdateOperationsInput | number
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14720,6 +14875,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -14789,10 +14945,12 @@ export namespace Prisma {
     status?: BookingStatus
     propertyType: string
     propertySize: string
-    buildingName: string
-    unitNumber: string
-    floor: string
+    buildingName?: string | null
+    unitNumber?: string | null
+    floor?: string | null
+    villaNumber?: string | null
     street: string
+    company?: string | null
     appointmentDate: Date | string
     timeSlot: string
     firstName: string
@@ -14801,6 +14959,7 @@ export namespace Prisma {
     email: string
     additionalDirections?: string | null
     additionalRequests?: string | null
+    additionalInfo?: string | null
     isPaid?: boolean
   }
 
@@ -14811,10 +14970,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14823,6 +14984,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     client?: UserUpdateOneRequiredWithoutBookingsNestedInput
     photographer?: UserUpdateOneWithoutAssignedBookingsNestedInput
@@ -14840,10 +15002,12 @@ export namespace Prisma {
     status?: EnumBookingStatusFieldUpdateOperationsInput | BookingStatus
     propertyType?: StringFieldUpdateOperationsInput | string
     propertySize?: StringFieldUpdateOperationsInput | string
-    buildingName?: StringFieldUpdateOperationsInput | string
-    unitNumber?: StringFieldUpdateOperationsInput | string
-    floor?: StringFieldUpdateOperationsInput | string
+    buildingName?: NullableStringFieldUpdateOperationsInput | string | null
+    unitNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    floor?: NullableStringFieldUpdateOperationsInput | string | null
+    villaNumber?: NullableStringFieldUpdateOperationsInput | string | null
     street?: StringFieldUpdateOperationsInput | string
+    company?: NullableStringFieldUpdateOperationsInput | string | null
     appointmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     timeSlot?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
@@ -14852,6 +15016,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     additionalDirections?: NullableStringFieldUpdateOperationsInput | string | null
     additionalRequests?: NullableStringFieldUpdateOperationsInput | string | null
+    additionalInfo?: NullableStringFieldUpdateOperationsInput | string | null
     isPaid?: BoolFieldUpdateOperationsInput | boolean
     statusHistories?: BookingStatusHistoryUncheckedUpdateManyWithoutBookingNestedInput
     addOns?: AddOnUncheckedUpdateManyWithoutBookingNestedInput

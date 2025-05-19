@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/api/bookings/[id]/assign/route.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
@@ -221,33 +222,46 @@ export async function POST(
       );
     }
 
-    // Update booking with photographer assignment
-    const updatedBooking = await prisma.booking.update({
-      where: { id: bookingId },
-      data: {
-        photographerId,
-        status: "PHOTOGRAPHER_ASSIGNED",
-      },
-      include: {
-        addOns: true,
-        client: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
+    // Use a transaction to ensure both operations complete together
+    const [updatedBooking, _] = await prisma.$transaction([
+      // 1. Update booking with photographer assignment
+      prisma.booking.update({
+        where: { id: bookingId },
+        data: {
+          photographerId,
+          status: "PHOTOGRAPHER_ASSIGNED",
+        },
+        include: {
+          addOns: true,
+          client: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              email: true,
+            },
+          },
+          photographer: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              email: true,
+            },
           },
         },
-        photographer: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
-          },
-        },
-      },
-    });
+      }),
+      
+      // 2. Create a booking status history entry
+      prisma.bookingStatusHistory.create({
+        data: {
+          bookingId,
+          userId: user.id, // Admin who made the change
+          status: "PHOTOGRAPHER_ASSIGNED",
+          notes: `Photographer ${photographer.firstname} ${photographer.lastname} assigned by admin`
+        }
+      })
+    ]);
 
     return NextResponse.json(updatedBooking);
   } catch (error: any) {
