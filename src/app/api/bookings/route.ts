@@ -177,6 +177,25 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // ✅ Add status history entry
+    const { error: historyError } = await supabase
+    .from("BookingStatusHistory")
+    .insert([
+      {
+        bookingId: booking.id,
+        status: "BOOKING_CREATED",
+        userId: user.id, // ✅ this is required
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
+
+
+    if (historyError) {
+    console.error("Failed to add booking status history:", historyError);
+    // You might still allow the booking to proceed, or handle this as a critical error
+    }
+
     return NextResponse.json(
       {
         message: "Booking created successfully",

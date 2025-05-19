@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { supabaseServerClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // must be a secure server-side key
+);
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.email) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -19,11 +24,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = supabaseServerClient();
-
-    // Get user
     const { data: user, error: userError } = await supabase
-      .from("users")
+      .from("User")
       .select("*")
       .eq("email", session.user.email)
       .single();
@@ -32,16 +34,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Get booking
     const { data: booking, error: bookingError } = await supabase
-      .from("bookings")
+      .from("Booking")
       .select(`
         *,
-        add_ons(*),
+        addOns(*),
         packages(*)
       `)
       .eq("id", bookingId)
       .single();
+      console.log("booking", booking);
+      
 
     if (bookingError || !booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
@@ -51,7 +54,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Calculate total booking amount
     const addOnTotal = booking.add_ons?.reduce((sum: number, addon: any) => sum + addon.price, 0) || 0;
     const totalBookingAmount = parseFloat((booking.packages.price + addOnTotal).toFixed(2));
     const receivedAmount = parseFloat(parseFloat(amount).toFixed(2));
@@ -69,9 +71,8 @@ export async function POST(req: NextRequest) {
 
     const transactionId = `TXN-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-    // Create payment
     const { data: payment, error: paymentError } = await supabase
-      .from("payments")
+      .from("Payment")
       .insert({
         user_id: user.id,
         booking_id: booking.id,
@@ -83,19 +84,14 @@ export async function POST(req: NextRequest) {
       .select()
       .single();
 
-    if (paymentError) {
-      throw paymentError;
-    }
+    if (paymentError) throw paymentError;
 
-    // Update booking isPaid
     const { error: updateError } = await supabase
-      .from("bookings")
+      .from("Booking")
       .update({ is_paid: true })
       .eq("id", bookingId);
 
-    if (updateError) {
-      throw updateError;
-    }
+    if (updateError) throw updateError;
 
     return NextResponse.json(
       { message: "Payment processed", payment, transactionId },
@@ -110,23 +106,18 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.email) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const bookingId = new URL(req.url).searchParams.get("bookingId")?.replace(/"/g, "");
 
     if (!bookingId) {
-      return NextResponse.json(
-        { error: "Missing bookingId" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing bookingId" }, { status: 400 });
     }
 
-    const supabase = supabaseServerClient();
-
     const { data: user, error: userError } = await supabase
-      .from("users")
+      .from("User")
       .select("*")
       .eq("email", session.user.email)
       .single();
@@ -136,10 +127,10 @@ export async function GET(req: NextRequest) {
     }
 
     const { data: booking, error: bookingError } = await supabase
-      .from("bookings")
+      .from("Booking")
       .select(`
         *,
-        add_ons(*),
+        addOns(*),
         packages(*),
         payments(*)
       `)
@@ -168,6 +159,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Failed to fetch payment", details: error.message }, { status: 500 });
   }
 }
+
 
 
 
