@@ -1,5 +1,4 @@
-
-// eslint-disable @typescript-eslint/no-explicit-any 
+// eslint-disable @typescript-eslint/no-explicit-any
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -179,21 +178,20 @@ export async function POST(req: NextRequest) {
 
     // ✅ Add status history entry
     const { error: historyError } = await supabase
-    .from("BookingStatusHistory")
-    .insert([
-      {
-        bookingId: booking.id,
-        status: "BOOKING_CREATED",
-        userId: user.id, // ✅ this is required
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ]);
-
+      .from("BookingStatusHistory")
+      .insert([
+        {
+          bookingId: booking.id,
+          status: "BOOKING_CREATED",
+          userId: user.id, // ✅ this is required
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ]);
 
     if (historyError) {
-    console.error("Failed to add booking status history:", historyError);
-    // You might still allow the booking to proceed, or handle this as a critical error
+      console.error("Failed to add booking status history:", historyError);
+      // You might still allow the booking to proceed, or handle this as a critical error
     }
 
     return NextResponse.json(
@@ -277,17 +275,21 @@ export async function GET(req: NextRequest) {
     }
 
     // Get total count separately (Supabase doesn't return count with range)
-    const { count: totalCount, error: countError } = await supabase
+    let countQuery = supabase
       .from("Booking")
-      .select("*", { count: "exact", head: true })
-      .match(
-        user.role === "CLIENT"
-          ? { clientId: user.id }
-          : user.role === "PHOTOGRAPHER"
-          ? { photographerId: user.id }
-          : {}
-      )
-      .eq(status ? "status" : undefined, status || undefined);
+      .select("*", { count: "exact", head: true });
+
+    if (user.role === "CLIENT") {
+      countQuery = countQuery.eq("clientId", user.id);
+    } else if (user.role === "PHOTOGRAPHER") {
+      countQuery = countQuery.eq("photographerId", user.id);
+    }
+
+    if (status) {
+      countQuery = countQuery.eq("status", status);
+    }
+
+    const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
       console.error("Failed to get total bookings count:", countError);
@@ -313,12 +315,6 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-
-
-
-
-
 
 /*
 // eslint-disable @typescript-eslint/no-explicit-any
