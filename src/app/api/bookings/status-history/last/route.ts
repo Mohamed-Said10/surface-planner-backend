@@ -78,8 +78,7 @@ export async function GET() {
 
       console.log("statusHistory", statusHistory);
       console.log("statusError", statusError);
-      console.log("Looking for bookingId:", lastBookingData.id);
-
+      
 
     if (statusError) {
       return NextResponse.json(
@@ -93,10 +92,11 @@ export async function GET() {
       statusHistory,
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error retrieving booking status history:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to retrieve status history", details: error.message },
+      { error: "Failed to retrieve status history", details: errorMessage },
       { status: 500 }
     );
   }

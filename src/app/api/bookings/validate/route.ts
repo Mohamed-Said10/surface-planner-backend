@@ -93,12 +93,13 @@ export async function POST(req: NextRequest) {
       isValid: true,
       message: "Date and time slot are available for booking",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error validating booking:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       {
         error: "Failed to validate booking",
-        details: error.message,
+        details: errorMessage,
         isValid: false,
       },
       { status: 500 }

@@ -76,10 +76,10 @@ export async function GET(
     }
 
     return NextResponse.json(booking);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching booking:", error);
     return NextResponse.json(
-      { error: "Failed to fetch booking", details: error.message },
+      { error: "Failed to fetch booking", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }
@@ -194,10 +194,10 @@ export async function PUT(
     }
 
     return NextResponse.json(updatedBooking);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating booking:", error);
     return NextResponse.json(
-      { error: "Failed to update booking", details: error.message },
+      { error: "Failed to update booking", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }
@@ -267,10 +267,10 @@ export async function DELETE(
         { status: 403 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error deleting booking:", error);
     return NextResponse.json(
-      { error: "Failed to delete booking", details: error.message },
+      { error: "Failed to delete booking", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }
@@ -566,4 +566,4 @@ export async function DELETE(
     );
   }
 }
-/*
+*/

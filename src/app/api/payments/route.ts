@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { createClient } from "@supabase/supabase-js";
+import { AddOn } from "@prisma/client";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const addOnTotal = booking.add_ons?.reduce((sum: number, addon: any) => sum + addon.price, 0) || 0;
+    const addOnTotal = booking.add_ons?.reduce((sum: number, addon: AddOn) => sum + addon.price, 0) || 0;
     const totalBookingAmount = parseFloat((booking.packages.price + addOnTotal).toFixed(2));
     const receivedAmount = parseFloat(parseFloat(amount).toFixed(2));
 
@@ -97,9 +98,14 @@ export async function POST(req: NextRequest) {
       { message: "Payment processed", payment, transactionId },
       { status: 201 }
     );
-  } catch (error: any) {
-    console.error("Error processing payment:", error);
-    return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: "Internal Server Error", details: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
+    }
+    return NextResponse.json({ 
+      error: "Internal Server Error", 
+      details: error instanceof Error ? error.message : "Unknown error" 
+    }, { status: 500 });
   }
 }
 
@@ -146,7 +152,7 @@ export async function GET(req: NextRequest) {
     }
 
     const totalAmount = booking.packages.price +
-      booking.add_ons.reduce((sum: number, addon: any) => sum + addon.price, 0);
+      booking.add_ons.reduce((sum: number, addon: AddOn) => sum + addon.price, 0);
 
     return NextResponse.json({
       booking,
@@ -154,9 +160,12 @@ export async function GET(req: NextRequest) {
       isPaid: booking.is_paid,
       payments: booking.payments,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching payments:", error);
-    return NextResponse.json({ error: "Failed to fetch payment", details: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Failed to fetch payment", 
+      details: error instanceof Error ? error.message : "Unknown error" 
+    }, { status: 500 });
   }
 }
 

@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if package exists
+    // eslint-disable-next-line prefer-const
     let { data: packageData, error: packageError } = await supabase
       .from("Package")
       .select("*")
@@ -160,7 +161,7 @@ export async function POST(req: NextRequest) {
 
     // Insert addOns if present
     if (addOns && Array.isArray(addOns) && addOns.length > 0) {
-      const addOnsData = addOns.map((addon: any) => ({
+      const addOnsData = addOns.map((addon) => ({
         bookingId: booking.id,
         addonId: addon.id,
         name: addon.name,
@@ -205,10 +206,10 @@ export async function POST(req: NextRequest) {
       },
       { status: 201, headers: corsHeaders }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating booking:", error);
     return NextResponse.json(
-      { error: "Failed to create booking", details: error.message },
+      { error: "Failed to create booking", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500, headers: corsHeaders }
     );
   }
@@ -307,10 +308,10 @@ export async function GET(req: NextRequest) {
       },
       { headers: corsHeaders }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching bookings:", error);
     return NextResponse.json(
-      { error: "Failed to fetch bookings", details: error.message },
+      { error: "Failed to fetch bookings", details:  error instanceof Error ? error.message : "Unknown error"  },
       { status: 500, headers: corsHeaders }
     );
   }

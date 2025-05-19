@@ -119,7 +119,7 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       if (session.user && token.id) {
         // Fetch full user details from Supabase
-        const { data: user, error } = await supabase
+        const { data: user } = await supabase
           .from("User")
           .select("role, image, firstname, lastname, phoneNumber, dateOfBirth, address")
           .eq("id", token.id)
@@ -128,7 +128,7 @@ export const authOptions: AuthOptions = {
         if (user) {
           session.user = {
             ...session.user,
-            id: token.id,
+            id: String(token.id),
             role: user.role || "CLIENT",
             image: user.image || "",
             firstname: user.firstname,

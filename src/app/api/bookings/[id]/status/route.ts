@@ -1,15 +1,19 @@
 // src/app/api/bookings/[id]/status/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { createClient } from "@supabase/supabase-js";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { createServerClient } from "@/lib/supabase/server";
+
+// Environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!; // or anon key if only public access is needed
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const supabase = createServerClient();
-
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -86,7 +90,6 @@ export async function PUT(
       );
     }
 
-    // Transactional update: mimic with sequential operations
     const { error: historyError } = await supabase
       .from("BookingStatusHistory")
       .insert([
@@ -101,7 +104,7 @@ export async function PUT(
       throw new Error(`Failed to insert status history: ${historyError.message}`);
     }
 
-    const updateData: any = { status };
+    const updateData: { status: string; photographerId?: string } = { status };
     if (isPhotographerAcceptingBooking) {
       updateData.photographerId = user.id;
     }
@@ -113,12 +116,12 @@ export async function PUT(
       .select(`
         *,
         addOns (*),
-        statusHistories:bookingStatusHistory (
+        statusHistories:BookingStatusHistory (
           *,
-          user:users (id, firstname, lastname, email, role)
+          user:User (id, firstname, lastname, email, role)
         ),
-        client:users (id, firstname, lastname, email),
-        photographer:users (id, firstname, lastname, email)
+        client:User (id, firstname, lastname, email),
+        photographer:User (id, firstname, lastname, email)
       `)
       .single();
 
@@ -132,21 +135,19 @@ export async function PUT(
         ? "Booking accepted and assigned to you successfully"
         : "Booking status updated successfully",
     });
-  } catch (error: any) {
-    console.error("Error updating booking status:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
     return NextResponse.json(
-      { error: "Failed to update booking status", details: error.message },
+      { error: "Failed to update booking status", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }
-}
+}}
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const supabase = createServerClient();
-
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -208,14 +209,15 @@ export async function GET(
     }
 
     return NextResponse.json(statusHistory);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error retrieving booking status history:", error);
     return NextResponse.json(
-      { error: "Failed to retrieve status history", details: error.message },
+      { error: "Failed to retrieve status history", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }
 }
+
 
 
 
@@ -459,4 +461,4 @@ export async function GET(
     );
   }
 }
-  */
+*/
