@@ -1,15 +1,23 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+
+interface AddOn {
+  id: string;
+  name: string;
+  price: number;
+  addonId?: string;
+  bookingId?: string;
+}
 
 export default function ClientDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   
   // State for bookings and pagination
-  const [bookings, setBookings] = useState([])
+  const [bookings, setBookings] = useState<{ id: string; packageName: string; buildingName: string; unitNumber: string; appointmentDate: string; timeSlot: string; status: string }[]>([])
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
@@ -19,10 +27,10 @@ export default function ClientDashboard() {
   
   // State for booking form
   const [showBookingForm, setShowBookingForm] = useState(false)
-  const [packages, setPackages] = useState([])
-  const [addOns, setAddOns] = useState([])
-  const [selectedPackage, setSelectedPackage] = useState(null)
-  const [selectedAddOns, setSelectedAddOns] = useState([])
+  const [packages, setPackages] = useState<{ id: number; name: string; price: number; description: string }[]>([])
+  const [addOns, setAddOns] = useState<{ id: string; name: string; price: number; description: string }[]>([])
+  const [selectedPackage, setSelectedPackage] = useState<{ id: number; name: string; price: number; description: string } | null>(null)
+  const [selectedAddOns, setSelectedAddOns] = useState<AddOn[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
@@ -44,12 +52,11 @@ export default function ClientDashboard() {
   })
 
   // Handle loading state
-  if (status === "loading") {
-    return <div className="dashboard-container">Loading...</div>
-  }
-
-  // Redirect if not authenticated or not a client
   useEffect(() => {
+    if (status === "loading") {
+      return
+    }
+
     if (status === "unauthenticated") {
       router.push("/auth/login")
     } else if (session?.user?.role !== "CLIENT") {
@@ -57,14 +64,16 @@ export default function ClientDashboard() {
     }
   }, [status, session, router])
 
-  // Fetch bookings
   useEffect(() => {
     if (status === "authenticated") {
       fetchBookings()
-      // Also fetch packages and addons for the booking form
       fetchPackages()
     }
   }, [status, pagination.page])
+
+  if (status === "loading") {
+    return <div className="dashboard-container">Loading...</div>
+  }
 
   const fetchBookings = async () => {
     try {
@@ -79,7 +88,7 @@ export default function ClientDashboard() {
       setBookings(data.bookings)
       setPagination(data.pagination)
     } catch (err) {
-      setError("Error fetching bookings: " + err.message)
+      setError("Error fetching bookings: " + (err instanceof Error ? err.message : "Unknown error"))
     } finally {
       setLoading(false)
     }
@@ -101,11 +110,11 @@ export default function ClientDashboard() {
         { id: "3", name: "Photo Album", price: 100, description: "Printed photo album" }
       ])
     } catch (err) {
-      setError("Error fetching packages: " + err.message)
+      setError("Error fetching packages: " + (err instanceof Error ? err.message : "Unknown error"))
     }
   }
 
-  const handleAddOnToggle = (addon) => {
+  const handleAddOnToggle = (addon: AddOn) => {
     if (selectedAddOns.some(item => item.id === addon.id)) {
       setSelectedAddOns(selectedAddOns.filter(item => item.id !== addon.id))
     } else {
@@ -113,15 +122,32 @@ export default function ClientDashboard() {
     }
   }
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setBookingData({
-      ...bookingData,
-      [name]: value
-    })
+  interface BookingData {
+    propertyType: string;
+    propertySize: string;
+    buildingName: string;
+    unitNumber: string;
+    floor: string;
+    street: string;
+    date: string;
+    timeSlot: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
   }
 
-  const handleSubmit = async (e) => {
+  // Removed unnecessary interface declaration
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const { name, value } = e.target;
+    setBookingData((prevBookingData: BookingData) => ({
+      ...prevBookingData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     
     if (!selectedPackage) {
@@ -133,19 +159,42 @@ export default function ClientDashboard() {
       setLoading(true)
       setError("")
       
+      interface BookingRequest {
+        selectedPackage: { id: number; name: string; price: number; description: string };
+        addOns: AddOn[];
+        propertyType: string;
+        propertySize: string;
+        buildingName: string;
+        unitNumber: string;
+        floor: string;
+        street: string;
+        date: string;
+        timeSlot: string;
+        firstName: string;
+        lastName: string;
+        phoneNumber: string;
+        email: string;
+      }
+
+      const bookingRequest: BookingRequest = {
+        selectedPackage,
+        addOns: selectedAddOns,
+        ...bookingData
+      }
+
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          selectedPackage,
-          addOns: selectedAddOns,
-          ...bookingData
-        })
+        body: JSON.stringify(bookingRequest)
       })
       
-      const data = await res.json()
+      interface BookingResponse {
+        error?: string;
+      }
+
+      const data: BookingResponse = await res.json()
       
       if (!res.ok) {
         throw new Error(data.error || "Failed to create booking")
@@ -176,14 +225,18 @@ export default function ClientDashboard() {
       setSelectedPackage(null)
       setSelectedAddOns([])
     } catch (err) {
-      setError(err.message)
+      setError(err instanceof Error ? err.message : "An unknown error occurred")
     } finally {
       setLoading(false)
     }
   }
 
-  const getStatusBadge = (status) => {
-    const statusColors = {
+  interface StatusColors {
+    [key: string]: string;
+  }
+
+  const getStatusBadge = (status: string): React.ReactElement => {
+    const statusColors: StatusColors = {
       BOOKING_CREATED: "bg-blue-100 text-blue-800",
       ASSIGNED: "bg-yellow-100 text-yellow-800",
       IN_PROGRESS: "bg-purple-100 text-purple-800",
@@ -522,7 +575,7 @@ export default function ClientDashboard() {
         
         {!loading && bookings.length === 0 && (
           <div className="bg-gray-50 p-8 text-center rounded-lg">
-            <p className="text-gray-600">You don't have any bookings yet.</p>
+            <p className="text-gray-600">You don&apos;t have any bookings yet.</p>
             <button 
               className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               onClick={() => setShowBookingForm(true)}

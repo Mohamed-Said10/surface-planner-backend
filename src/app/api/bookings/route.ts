@@ -249,8 +249,8 @@ export async function GET(req: NextRequest) {
     *,
     addOns: AddOn(*),
     package: Package(*),
-    client: User!clientId(id, firstname, lastname, email),
-    photographer: User!photographerId(id, firstname, lastname, email)
+    client: User!Booking_clientId_fkey(id, firstname, lastname, email),
+    photographer: User!Booking_photographerId_fkey(id, firstname, lastname, email)
   `);
 
     if (user.role === "CLIENT") {

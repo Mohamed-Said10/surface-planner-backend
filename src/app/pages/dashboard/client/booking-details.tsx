@@ -4,7 +4,64 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-export default function BookingDetails({ booking, onClose }: { booking: any, onClose: () => void }) {
+
+interface AddOn {
+  id: string;
+  name: string;
+  price: number;
+  addonId: string;
+  bookingId: string;
+}
+
+interface Package {
+  id: number;
+  name: string;
+  price: number;
+  features: string[];
+  description: string;
+  pricePerExtra: number;
+}
+
+interface User {
+  id: string;
+  email: string;
+  lastname: string;
+  firstname: string;
+}
+
+interface Booking {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  clientId: string;
+  photographerId: string | null;
+  status: string;
+  packageId: number;
+  propertyType: string;
+  propertySize: string;
+  buildingName: string;
+  unitNumber: string;
+  floor: string;
+  street: string;
+  appointmentDate: string;
+  timeSlot: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  additionalDirections: string | null;
+  additionalRequests: string | null;
+  isPaid: boolean;
+  addOns: AddOn[];
+  package: Package;
+  client: User;
+  photographer: User | null;
+}
+
+
+
+
+export default function BookingDetails({ booking, onClose }: { booking: Booking, onClose: () => void }) {
   const { data: session } = useSession()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -23,7 +80,7 @@ export default function BookingDetails({ booking, onClose }: { booking: any, onC
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user?.token || session?.accessToken}`,
+          Authorization: `Bearer ${(session as unknown as { accessToken: string })?.accessToken}`,
         },
         body: JSON.stringify({ status })
       })
@@ -35,7 +92,7 @@ export default function BookingDetails({ booking, onClose }: { booking: any, onC
       setSuccess("Status updated successfully!")
       router.refresh() // Refresh the page to show updated data
     } catch (err) {
-      setError(err.message)
+      setError(err instanceof Error ? err.message : "An unexpected error occurred")
     } finally {
       setLoading(false)
     }
@@ -51,7 +108,7 @@ export default function BookingDetails({ booking, onClose }: { booking: any, onC
       const res = await fetch(`/api/bookings/${booking.id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${session?.user?.token || session?.accessToken}`,
+          Authorization: `Bearer ${(session as unknown as { accessToken: string })?.accessToken}`,
         }
       })
       
@@ -63,7 +120,7 @@ export default function BookingDetails({ booking, onClose }: { booking: any, onC
       onClose()
       router.refresh()
     } catch (err) {
-      setError(err.message)
+      setError(err instanceof Error ? err.message : "An unexpected error occurred")
     } finally {
       setLoading(false)
     }
@@ -134,7 +191,7 @@ export default function BookingDetails({ booking, onClose }: { booking: any, onC
               <div className="mt-2">
                 <strong>Add-ons:</strong>
                 <ul className="list-disc pl-5">
-                  {booking.addOns.map((addon: any) => (
+                  {booking.addOns.map((addon: AddOn) => (
                     <li key={addon.id}>{addon.name} (${addon.price})</li>
                   ))}
                 </ul>

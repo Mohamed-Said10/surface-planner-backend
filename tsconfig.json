@@ -22,7 +22,7 @@
     "paths": {
       "@/*": ["src/*"] ,
       "@prisma/client": ["./generated/prisma-client/index"]
-    }
+    },
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/auth/[...nextauth]Test/route.ts.disabled", "src/app/api/auth/[...nextauth]/route.ts.disabled"],
   "exclude": ["node_modules"]
