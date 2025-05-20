@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
@@ -43,6 +43,7 @@ export default function VerifyEmail() {
   }, [searchParams]);
 
   return (
+    <Suspense>
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <div className="flex justify-center mb-8">
@@ -109,6 +110,6 @@ export default function VerifyEmail() {
           </p>
         </div>
       </div>
-    </div>
+    </div></Suspense>
   );
 }

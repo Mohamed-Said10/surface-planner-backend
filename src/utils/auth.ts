@@ -20,6 +20,8 @@ export async function verifyToken(req: NextRequest) {
     const decoded = jwt.verify(token, SECRET_KEY); // Verify the token
     return { error: false, user: decoded }; // Return the decoded token (user info)
   } catch (error) {
+    console.log(error);
+    
     return {
       error: true,
       response: NextResponse.json(

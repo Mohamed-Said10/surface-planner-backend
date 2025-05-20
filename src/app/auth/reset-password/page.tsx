@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function ResetPassword() {
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
+  const token = searchParams.get("token");
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -44,6 +44,7 @@ export default function ResetPassword() {
   };
 
   return (
+    <Suspense>
     <div>
       <h1>Reset Password</h1>
       <form onSubmit={handleSubmit}>
@@ -66,5 +67,6 @@ export default function ResetPassword() {
       {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
+    </Suspense>
   );
 }
