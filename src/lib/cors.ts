@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-const allowedOrigin = "http://localhost:3001";
+const allowedOrigin = "https://sp-dashboard-nine.vercel.app";
 
 export function getCorsHeaders(request: NextRequest): HeadersInit {
   const origin = request.headers.get("origin");

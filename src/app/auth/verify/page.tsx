@@ -66,7 +66,7 @@ export default function VerifyEmail() {
                 <CheckCircle2 className="h-6 w-6 text-green-600" />
               </div>
               <p className="text-green-600 font-medium">{message}</p>
-              <Link href="http://localhost:3001/auth/login" className="block mt-4">
+              <Link href="https://sp-dashboard-nine.vercel.app/auth/login" className="block mt-4">
                 <Button className="w-full bg-[#0F553E] hover:bg-[#0F553E]/90 text-white">
                   Continue to Login
                 </Button>
@@ -88,7 +88,7 @@ export default function VerifyEmail() {
                 >
                   Try Again
                 </Button>
-                <Link href="http://localhost:3001/auth/signup" className="flex-1">
+                <Link href="https://sp-dashboard-nine.vercel.app/auth/signup" className="flex-1">
                   <Button className="w-full bg-[#0F553E] hover:bg-[#0F553E]/90 text-white">
                     Sign Up
                   </Button>

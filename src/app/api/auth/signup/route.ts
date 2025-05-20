@@ -12,7 +12,7 @@ const supabase = createClient(
 
 // Define CORS headers once for reuse
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "http://localhost:3001",
+  "Access-Control-Allow-Origin": "https://sp-dashboard-nine.vercel.app",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
@@ -132,7 +132,7 @@ import crypto from "crypto";
 
 // Define CORS headers once for reuse
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "http://localhost:3001",
+  "Access-Control-Allow-Origin": "https://sp-dashboard-nine.vercel.app",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
