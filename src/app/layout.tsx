@@ -6,11 +6,12 @@ import SessionProviderWrapper from "../../src/app/sessionproviderwrapper"; // Im
 import "./globals.css";
 import { ReactNode } from "react";
 
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.className} ${geistMono.className} antialiased`}
       >
         <SessionProviderWrapper>{children}</SessionProviderWrapper> {/* Wrap children */}
       </body>

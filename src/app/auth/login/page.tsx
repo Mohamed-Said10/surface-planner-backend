@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
-
+import { Suspense } from 'react'
 export default function Login() {
   const router = useRouter()
   const searchParams = useSearchParams();
@@ -17,7 +17,7 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
 
-    const res = await signIn("credentials",{
+    const res = await signIn("credentials", {
       email,
       password,
       redirect: false,
@@ -48,44 +48,45 @@ export default function Login() {
   }
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        
-        <a
-          href="/auth/forgot-password"
-          style={{ display: "block", marginTop: "5px", color: "blue", textDecoration: "underline" }}
-        >
-          Forget Password?
-        </a>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
-      <p style={{ marginTop: "10px" }}>
-        Don&apos;t have an account?{" "}
-        <a
-          href="/auth/signup"
-          style={{ color: "blue", textDecoration: "underline" }}
-        >
-          Signup
-        </a>
-      </p>
-    </div>
+    <Suspense>
+      <div>
+        <h1>Login</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <a
+            href="/auth/forgot-password"
+            style={{ display: "block", marginTop: "5px", color: "blue", textDecoration: "underline" }}
+          >
+            Forget Password?
+          </a>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+        <p style={{ marginTop: "10px" }}>
+          Don&apos;t have an account?{" "}
+          <a
+            href="/auth/signup"
+            style={{ color: "blue", textDecoration: "underline" }}
+          >
+            Signup
+          </a>
+        </p>
+      </div></Suspense>
   )
 }

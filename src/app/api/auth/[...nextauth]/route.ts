@@ -1,3 +1,57 @@
+import NextAuth from "next-auth";
+import { authOptions as authoptions } from "@/utils/authOptions";
+export const authOptions = authoptions;
+declare module "next-auth" {
+  interface User {
+    id: string;
+    role?: string;
+    firstname?: string;
+    lastname?: string;
+    phoneNumber?: string;
+    dateOfBirth?: Date | null;
+    address?: string;
+    emailVerified?: Date | null;
+    password?: string;
+    image?: string;
+  }
+
+  interface JWT {
+    id: string;
+    role?: string;
+    firstname?: string;
+    lastname?: string;
+    phoneNumber?: string;
+    image?: string;
+  }
+
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string;
+      role?: string;
+      firstname?: string;
+      lastname?: string;
+      phoneNumber?: string;
+      dateOfBirth?: string;
+      address?: string;
+    };
+  }
+}
+
+
+
+const handler = NextAuth(authoptions);
+export { handler as GET, handler as POST, handler as OPTIONS };
+
+
+
+
+
+
+
+/*
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -120,21 +174,46 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        session.user.role = token.role;
-        session.user.id = token.id;
-        session.user.firstname = token.firstname;
-        session.user.lastname = token.lastname;
-        session.user.phoneNumber = token.phoneNumber;
-        session.user.dateOfBirth = token.dateOfBirth;
-        session.user.address = token.address;
-        session.user.image = token.image || "";
+      if (session.user && token.id) {
+        const user = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: {
+            role: true, // <-- Must be included!
+            image: true,
+            firstname: true,
+            lastname: true,
+            phoneNumber: true,
+            dateOfBirth: true,
+            address: true,
+          },
+        });
+    
+        if (user) {
+          session.user = {
+            ...session.user,
+            id: token.id,
+            role: user.role || "CLIENT", // Fallback to "CLIENT" if NULL
+            image: user.image || "",
+            firstname: user.firstname,
+            lastname: user.lastname,
+            phoneNumber: user.phoneNumber || "",
+            dateOfBirth: user.dateOfBirth?.toISOString(),
+            address: user.address || "",
+          };
+        }
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
+    }
   },
   pages: {
-    signIn: "/login",
+    signIn: "/auth/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
   cookies: {
@@ -155,3 +234,4 @@ export const authOptions: AuthOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST, handler as OPTIONS };
+*/
