@@ -9,7 +9,7 @@
                 },
                 {
                     "key": "Access-Control-Allow-Origin",
-                    "value": "*"
+                    "value": "http://localhost:3001"
                 },
                 {
                     "key": "Access-Control-Allow-Methods",
