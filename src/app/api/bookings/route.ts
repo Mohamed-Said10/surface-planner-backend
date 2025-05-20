@@ -133,6 +133,7 @@ export async function POST(req: NextRequest) {
       .insert([
         {
           clientId: user.id,
+          photographerId: null,
           packageId: selectedPackage.id,
           propertyType,
           propertySize,
