@@ -16,7 +16,7 @@ const supabase = createClient(
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -38,22 +38,50 @@ export async function GET(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const bookingId = params.id;
+    const { id } = await params;                   // ← await it
+    const bookingId = id;
 
     // Fetch booking with related addOns, client, photographer
     const { data: booking, error: bookingError } = await supabase
       .from("Booking")
       .select(`
         *,
-        addOns: AddOn(*),
-        client: User!clientId(id, firstname, lastname, email),
-        photographer: User!photographerId(id, firstname, lastname, email)
+        package:Package(*),
+        client:User!Booking_clientId_fkey(id, firstname, lastname, email),
+        photographer:User!Booking_photographerId_fkey(id, firstname, lastname, email),
+        payments:Payment(
+          id,
+          amount,
+          status,
+          paymentMethod,
+          createdAt,
+          transactionId
+        )
       `)
       .eq("id", bookingId)
       .single();
 
-    if (bookingError || !booking) {
+    if (bookingError) {
+      console.error("Booking fetch error:", bookingError);
+      return NextResponse.json({
+        error: "Failed to fetch booking",
+        details: bookingError.message
+      }, { status: 500 });
+    }
+
+    if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    // Fetch addOns separately (using the selectedAddOns JSON field)
+    const addOnsIds = booking.selectedAddOns || [];
+    let addOnsData = [];
+    if (addOnsIds.length > 0) {
+      const { data: addOns } = await supabase
+        .from("AddOn")
+        .select("*")
+        .in("id", addOnsIds);
+      addOnsData = addOns || [];
     }
 
     // Permission checks
@@ -77,7 +105,25 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(booking);
+    // Calculate total amounts
+    const packagePrice = booking.package?.price || 0;
+    const addOnsTotal = addOnsData.reduce((sum: number, addon: any) => sum + (addon.price || 0), 0);
+    const totalCost = packagePrice + addOnsTotal;
+
+    const paidAmount = booking.payments?.reduce((sum: number, payment: any) =>
+      payment.status === 'COMPLETED' ? sum + payment.amount : sum, 0
+    ) || 0;
+
+    // Add calculated fields to booking
+    const bookingWithCalculations = {
+      ...booking,
+      addOns: addOnsData, // Include the fetched addOns
+      totalCost,
+      paidAmount,
+      remainingAmount: totalCost - paidAmount
+    };
+
+    return NextResponse.json(bookingWithCalculations);
   } catch (error: unknown) {
     console.error("Error fetching booking:", error);
     return NextResponse.json(
@@ -89,7 +135,7 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -111,7 +157,8 @@ export async function PUT(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const bookingId = params.id;
+    const { id } = await params;
+    const bookingId = id;
     const body = await req.json();
 
     // Get existing booking
@@ -207,7 +254,7 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -229,7 +276,8 @@ export async function DELETE(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const bookingId = params.id;
+    const { id } = await params;
+    const bookingId = id;
 
     // Get existing booking
     const { data: existingBooking, error: bookingError } = await supabase

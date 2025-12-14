@@ -219,6 +219,8 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+    console.log('GET /api/bookings - Session:', session?.user?.email);
+
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
@@ -232,9 +234,11 @@ export async function GET(req: NextRequest) {
       .eq("email", session.user.email)
       .single();
 
+    console.log('User lookup:', { email: session.user.email, found: !!user, error: userError?.message });
+
     if (userError || !user) {
       return NextResponse.json(
-        { error: "User not found" },
+        { error: "User not found", details: userError?.message },
         { status: 404, headers: corsHeaders }
       );
     }
@@ -269,7 +273,10 @@ export async function GET(req: NextRequest) {
 
     const { data: bookings, error: bookingsError } = await query;
 
+    console.log('Bookings query result:', { count: bookings?.length, error: bookingsError?.message });
+
     if (bookingsError) {
+      console.error('Bookings query error:', bookingsError);
       return NextResponse.json(
         { error: "Failed to fetch bookings", details: bookingsError.message },
         { status: 500, headers: corsHeaders }

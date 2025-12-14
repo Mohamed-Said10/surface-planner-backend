@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
-    // Create user
+    // Create client user
     const { error: insertError } = await supabase.from("User").insert({
       email,
       password: hashedPassword,
@@ -77,7 +77,9 @@ export async function POST(req: NextRequest) {
     // Send verification email
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       const transporter = nodemailer.createTransport({
-        service: "Gmail",
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // Use STARTTLS
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,

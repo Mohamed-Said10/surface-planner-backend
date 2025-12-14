@@ -75,7 +75,8 @@ export async function PUT(
 
     const validTransitions: Record<string, string[]> = {
       BOOKING_CREATED: ["PHOTOGRAPHER_ASSIGNED"],
-      PHOTOGRAPHER_ASSIGNED: ["SHOOTING"],
+      PHOTOGRAPHER_ASSIGNED: ["PHOTOGRAPHER_ACCEPTED", "SHOOTING"],
+      PHOTOGRAPHER_ACCEPTED: ["SHOOTING"],
       SHOOTING: ["EDITING"],
       EDITING: ["COMPLETED"],
     };

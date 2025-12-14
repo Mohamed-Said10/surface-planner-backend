@@ -1,49 +1,44 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// src/app/api/bookings/[id]/assign/route.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// app/api/bookings/[id]/assign/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { getServerSession } from "next-auth";
+import supabase from "@/lib/supabaseAdmin";
+import { authOptions } from "@/utils/authOptions";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-
-    // Get authenticated user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
         { status: 401 }
       );
     }
 
-    // Get user record from Supabase
-    const { data: userRecord, error: userError } = await supabase
+    const userEmail = session.user.email;
+    const { data: user, error: userError } = await supabase
       .from("User")
       .select("*")
-      .eq("email", user.email!)
+      .eq("email", userEmail)
       .single();
 
-    if (userError || !userRecord) {
+    if (userError || !user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    if (userRecord.role !== "ADMIN") {
+    // Only admins can assign photographers
+    if (user.role !== "ADMIN") {
       return NextResponse.json(
         { error: "Only administrators can assign photographers" },
         { status: 403 }
       );
     }
 
-    const bookingId = params.id;
+    const bookingId = (await params).id;
     const { photographerId } = await req.json();
 
     if (!photographerId) {
@@ -53,14 +48,14 @@ export async function POST(
       );
     }
 
-    // Verify photographer exists
-    const { data: photographer, error: photographerError } = await supabase
+    // Verify photographer exists and has the right role
+    const { data: photographer, error: photoError } = await supabase
       .from("User")
       .select("*")
       .eq("id", photographerId)
       .single();
 
-    if (photographerError || !photographer) {
+    if (photoError || !photographer) {
       return NextResponse.json(
         { error: "Photographer not found" },
         { status: 404 }
@@ -74,7 +69,7 @@ export async function POST(
       );
     }
 
-    // Check booking exists
+    // Get the existing booking
     const { data: existingBooking, error: bookingError } = await supabase
       .from("Booking")
       .select("*")
@@ -85,54 +80,55 @@ export async function POST(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    if (existingBooking.status !== "BOOKING_CREATED") {
+    // Ensure booking is in created status
+    console.log("Booking status:", existingBooking.status, "Type:", typeof existingBooking.status);
+    if (existingBooking.status?.toUpperCase() !== "BOOKING_CREATED") {
       return NextResponse.json(
-        {
-          error:
-            "Can only assign photographers to bookings in BOOKING_CREATED status",
-        },
+        { error: `Can only assign photographers to bookings in BOOKING_CREATED status. Current status: ${existingBooking.status}` },
         { status: 400 }
       );
     }
 
-    // Update the booking
+    // 1. Update booking with photographer assignment
     const { data: updatedBooking, error: updateError } = await supabase
       .from("Booking")
       .update({
         photographerId,
         status: "PHOTOGRAPHER_ASSIGNED",
+        updatedAt: new Date().toISOString(),
       })
       .eq("id", bookingId)
-      .select(
-        `
-        *,
-        addOns(*),
-        client:clientId(id, firstname, lastname, email),
-        photographer:photographerId(id, firstname, lastname, email)
-      `
-      )
-      .single();
+      .select();
 
     if (updateError) {
-      throw updateError;
+      throw new Error(`Failed to update booking: ${updateError.message}`);
     }
 
-    return NextResponse.json(updatedBooking);
+    // 2. Create a booking status history entry
+    const { error: historyError } = await supabase
+      .from("BookingStatusHistory")
+      .insert({
+        bookingId,
+        userId: user.id,
+        status: "PHOTOGRAPHER_ASSIGNED",
+        notes: `Photographer ${photographer.firstname} ${photographer.lastname} assigned by admin`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
+    if (historyError) {
+      throw new Error(`Failed to create history entry: ${historyError.message}`);
+    }
+
+    return NextResponse.json(updatedBooking[0] || updatedBooking);
   } catch (error: any) {
     console.error("Error assigning photographer:", error);
     return NextResponse.json(
-      {
-        error: "Failed to assign photographer",
-        details: error.message,
-      },
+      { error: "Failed to assign photographer", details: error.message },
       { status: 500 }
     );
   }
 }
-
-
-
-
 
 
 

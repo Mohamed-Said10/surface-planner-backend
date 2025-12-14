@@ -34,11 +34,11 @@ export default function Login() {
       if (callbackUrl) {
         router.push(callbackUrl); // Redirect to the callbackUrl if provided
       } else if (session?.user?.role === "ADMIN") {
-        router.push("../../../pages/dashboard/admin");
+        window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/dash/admin`;
       } else if (session?.user?.role === "PHOTOGRAPHER") {
-        router.push("../../../pages/dashboard/photographer");
+        window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/dash/photographer`;
       } else if (session?.user?.role === "CLIENT") {
-        router.push("../../../pages/dashboard/client");
+        window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/dash/client`;
       } else {
         setError("Invalid role. Please contact support.");
       }
