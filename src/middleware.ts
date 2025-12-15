@@ -1,27 +1,45 @@
 // middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 
-export function middleware(request: NextRequest) {
-  // Handle CORS
-  const response = NextResponse.next()
-  
-  // Set CORS headers
-  response.headers.set('Access-Control-Allow-Origin', 'https://sp-dashboard-nine.vercel.app')
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-csrf-token')
-  response.headers.set('Access-Control-Allow-Credentials', 'true')
-  response.headers.set('Access-Control-Max-Age', '86400')
+// Helper function to get CORS headers
+function getCorsHeaders(request?: NextRequest) {
+  const origin = request?.headers.get('origin') || '';
+  const allowedOrigins = [
+    'https://sp-dashboard-nine.vercel.app',
+    'http://localhost:3001'
+  ];
 
+  const allowedOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-csrf-token',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Max-Age': '86400'
+  }
+}
+
+// Helper function to handle CORS preflight requests
+function handleCorsOptions(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: getCorsHeaders(request)
+  })
+}
+
+export async function middleware(request: NextRequest) {
   // Handle preflight requests
   if (request.method === 'OPTIONS') {
     return handleCorsOptions(request)
   }
 
-  // 2. Create a base response we'll modify
+  // Create a base response we'll modify
   let response = NextResponse.next()
 
-  // 3. Protected routes configuration
+  // Protected routes configuration
   const protectedRoutes = {
     '/dash': ['CLIENT'],
     '/dash/bookings': ['CLIENT'],
@@ -30,7 +48,7 @@ export function middleware(request: NextRequest) {
     '/api/booking': ['CLIENT']
   }
 
-  const isProtected = Object.keys(protectedRoutes).some(route => 
+  const isProtected = Object.keys(protectedRoutes).some(route =>
     request.nextUrl.pathname.startsWith(route)
   )
 
@@ -49,12 +67,12 @@ export function middleware(request: NextRequest) {
       if (isApiRoute) {
         response = new NextResponse(
           JSON.stringify({ error: 'Authentication required' }),
-          { 
-            status: 401, 
+          {
+            status: 401,
             headers: {
               'Content-Type': 'application/json',
               ...getCorsHeaders(request)
-            } 
+            }
           }
         )
       } else {
@@ -72,17 +90,17 @@ export function middleware(request: NextRequest) {
 
     const requiredRoles = Object.entries(protectedRoutes)
       .find(([route]) => request.nextUrl.pathname.startsWith(route))?.[1] || []
-    
+
     if (!requiredRoles.includes(session.role as string)) {
       if (isApiRoute) {
         response = new NextResponse(
           JSON.stringify({ error: 'Insufficient permissions' }),
-          { 
-            status: 403, 
+          {
+            status: 403,
             headers: {
               'Content-Type': 'application/json',
               ...getCorsHeaders(request)
-            } 
+            }
           }
         )
       } else {
@@ -94,16 +112,16 @@ export function middleware(request: NextRequest) {
     if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)) {
       const csrfToken = request.cookies.get('next-auth.csrf-token')?.value
       const callbackUrl = request.cookies.get('next-auth.callback-url')?.value
-      
+
       if (!csrfToken || !callbackUrl) {
         response = new NextResponse(
           JSON.stringify({ error: 'CSRF token verification failed' }),
-          { 
-            status: 403, 
+          {
+            status: 403,
             headers: {
               'Content-Type': 'application/json',
               ...getCorsHeaders(request)
-            } 
+            }
           }
         )
         return response
@@ -117,7 +135,7 @@ export function middleware(request: NextRequest) {
     // Add security headers for API routes
     response.headers.set('X-Frame-Options', 'DENY')
     response.headers.set('X-Content-Type-Options', 'nosniff')
-    
+
     // Apply to existing response
     Object.entries(headers).forEach(([key, value]) => {
       response.headers.set(key, value)
