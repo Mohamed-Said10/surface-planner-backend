@@ -4,30 +4,41 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { createClient } from "@supabase/supabase-js";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://sp-dashboard-nine.vercel.app", // frontend origin
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Credentials": "true",
-};
+// Helper function to get CORS headers based on request origin
+function getCorsHeaders(request?: NextRequest) {
+  const origin = request?.headers.get('origin') || '';
+  const allowedOrigins = [
+    'https://sp-dashboard-nine.vercel.app',
+    'http://localhost:3001'
+  ];
+
+  const allowedOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, x-csrf-token",
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Max-Age": "86400"
+  };
+}
 
 const supabase = createClient(
   process.env.SUPABASE_URL || "",
   process.env.SUPABASE_SERVICE_ROLE_KEY || "" // Use service role key for server-side
 );
 
-export async function OPTIONS() {
+export async function OPTIONS(req: NextRequest) {
+  const corsHeaders = getCorsHeaders(req);
   return new NextResponse(null, {
-    status: 200,
-    headers: {
-      ...corsHeaders,
-      "Access-Control-Allow-Origin": "https://sp-dashboard-nine.vercel.app",
-      "Access-Control-Allow-Credentials": "true",
-    },
+    status: 204,
+    headers: corsHeaders,
   });
 }
 
 export async function POST(req: NextRequest) {
+  const corsHeaders = getCorsHeaders(req);
+
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -217,6 +228,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const corsHeaders = getCorsHeaders(req);
+
   try {
     const session = await getServerSession(authOptions);
     console.log('GET /api/bookings - Session:', session?.user?.email);
