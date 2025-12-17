@@ -1,680 +1,237 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-// eslint-disable @typescript-eslint/no-explicit-any 
-// app/api/bookings/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { createClient } from "@supabase/supabase-js";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client (adjust env var names if needed)
+// Helper function to get CORS headers based on request origin
+function getCorsHeaders(request?: NextRequest) {
+  const origin = request?.headers.get('origin') || '';
+  const allowedOrigins = [
+    'https://sp-dashboard-nine.vercel.app',
+    'http://localhost:3001'
+  ];
+
+  const allowedOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, x-csrf-token",
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Max-Age": "86400"
+  };
+}
+
 const supabase = createClient(
-  process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+  process.env.SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
+
+export async function OPTIONS(req: NextRequest) {
+  const corsHeaders = getCorsHeaders(req);
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
+  const corsHeaders = getCorsHeaders(req);
+
   try {
     const session = await getServerSession(authOptions);
+    console.log('GET /api/bookings/[id] - Session:', session?.user?.email);
+
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
-        { status: 401 }
+        { status: 401, headers: corsHeaders }
       );
     }
 
-    const userEmail = session.user.email;
     const { data: user, error: userError } = await supabase
       .from("User")
       .select("*")
-      .eq("email", userEmail)
+      .eq("email", session.user.email)
       .single();
 
+    console.log('User lookup:', { email: session.user.email, found: !!user, error: userError?.message });
+
     if (userError || !user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found", details: userError?.message },
+        { status: 404, headers: corsHeaders }
+      );
     }
 
-    const { id } = await params;                   // ← await it
-    const bookingId = id;
+    const bookingId = params.id;
 
-    // Fetch booking with related addOns, client, photographer
+    // Fetch single booking with related data
     const { data: booking, error: bookingError } = await supabase
       .from("Booking")
       .select(`
         *,
-        package:Package(*),
-        client:User!Booking_clientId_fkey(id, firstname, lastname, email),
-        photographer:User!Booking_photographerId_fkey(id, firstname, lastname, email),
-        payments:Payment(
-          id,
-          amount,
-          status,
-          paymentMethod,
-          createdAt,
-          transactionId
-        )
+        addOns: AddOn(*),
+        package: Package(*),
+        client: User!Booking_clientId_fkey(id, firstname, lastname, email),
+        photographer: User!Booking_photographerId_fkey(id, firstname, lastname, email, phoneNumber)
       `)
       .eq("id", bookingId)
       .single();
 
+    console.log('Booking query result:', { found: !!booking, error: bookingError?.message });
+
     if (bookingError) {
-      console.error("Booking fetch error:", bookingError);
-      return NextResponse.json({
-        error: "Failed to fetch booking",
-        details: bookingError.message
-      }, { status: 500 });
+      console.error('Booking query error:', bookingError);
+      return NextResponse.json(
+        { error: "Failed to fetch booking", details: bookingError.message },
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     if (!booking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-    }
-
-    // Fetch addOns separately (using the selectedAddOns JSON field)
-    const addOnsIds = booking.selectedAddOns || [];
-    let addOnsData = [];
-    if (addOnsIds.length > 0) {
-      const { data: addOns } = await supabase
-        .from("AddOn")
-        .select("*")
-        .in("id", addOnsIds);
-      addOnsData = addOns || [];
-    }
-
-    // Permission checks
-    if (
-      user.role === "CLIENT" &&
-      booking.clientId !== user.id
-    ) {
       return NextResponse.json(
-        { error: "You don't have permission to view this booking" },
-        { status: 403 }
+        { error: "Booking not found" },
+        { status: 404, headers: corsHeaders }
       );
     }
 
-    if (
-      user.role === "PHOTOGRAPHER" &&
-      booking.photographerId !== user.id
-    ) {
+    // Check authorization - user must be the client or photographer of this booking
+    if (user.role === "CLIENT" && booking.clientId !== user.id) {
       return NextResponse.json(
-        { error: "You don't have permission to view this booking" },
-        { status: 403 }
+        { error: "Forbidden. You don't have access to this booking." },
+        { status: 403, headers: corsHeaders }
       );
     }
 
-    // Calculate total amounts
-    const packagePrice = booking.package?.price || 0;
-    const addOnsTotal = addOnsData.reduce((sum: number, addon: any) => sum + (addon.price || 0), 0);
-    const totalCost = packagePrice + addOnsTotal;
+    if (user.role === "PHOTOGRAPHER" && booking.photographerId !== user.id) {
+      return NextResponse.json(
+        { error: "Forbidden. You don't have access to this booking." },
+        { status: 403, headers: corsHeaders }
+      );
+    }
 
-    const paidAmount = booking.payments?.reduce((sum: number, payment: any) =>
-      payment.status === 'COMPLETED' ? sum + payment.amount : sum, 0
-    ) || 0;
-
-    // Add calculated fields to booking
-    const bookingWithCalculations = {
-      ...booking,
-      addOns: addOnsData, // Include the fetched addOns
-      totalCost,
-      paidAmount,
-      remainingAmount: totalCost - paidAmount
-    };
-
-    return NextResponse.json(bookingWithCalculations);
+    return NextResponse.json(booking, { headers: corsHeaders });
   } catch (error: unknown) {
     console.error("Error fetching booking:", error);
     return NextResponse.json(
       { error: "Failed to fetch booking", details: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
 
-export async function PUT(
+export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
+  const corsHeaders = getCorsHeaders(req);
+
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
-        { status: 401 }
+        { status: 401, headers: corsHeaders }
       );
     }
 
-    const userEmail = session.user.email;
     const { data: user, error: userError } = await supabase
       .from("User")
       .select("*")
-      .eq("email", userEmail)
+      .eq("email", session.user.email)
       .single();
 
     if (userError || !user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404, headers: corsHeaders }
+      );
     }
 
-    const { id } = await params;
-    const bookingId = id;
+    const bookingId = params.id;
     const body = await req.json();
+    const { reason, action } = body;
 
-    // Get existing booking
-    const { data: existingBooking, error: bookingError } = await supabase
+    // Fetch booking to check ownership
+    const { data: booking, error: bookingError } = await supabase
       .from("Booking")
       .select("*")
       .eq("id", bookingId)
       .single();
 
-    if (bookingError || !existingBooking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-    }
-
-    // Permission validation
-    if (user.role === "CLIENT") {
-      if (existingBooking.clientId !== user.id) {
-        return NextResponse.json(
-          { error: "You don't have permission to update this booking" },
-          { status: 403 }
-        );
-      }
-      if (existingBooking.status !== "BOOKING_CREATED") {
-        return NextResponse.json(
-          { error: "Cannot modify booking after photographer assignment" },
-          { status: 403 }
-        );
-      }
-    } else if (user.role === "PHOTOGRAPHER") {
-      if (existingBooking.photographerId !== user.id) {
-        return NextResponse.json(
-          { error: "You don't have permission to update this booking" },
-          { status: 403 }
-        );
-      }
-      const allowedFields = ["status"];
-      const requestedFields = Object.keys(body);
-      if (!requestedFields.every(field => allowedFields.includes(field))) {
-        return NextResponse.json(
-          { error: "Photographers can only update the booking status" },
-          { status: 403 }
-        );
-      }
-    }
-
-    // Validate status transitions
-    if (body.status) {
-      const validTransitions: Record<string, string[]> = {
-        "BOOKING_CREATED": ["PHOTOGRAPHER_ASSIGNED"],
-        "PHOTOGRAPHER_ASSIGNED": ["SHOOTING"],
-        "SHOOTING": ["EDITING"],
-        "EDITING": ["COMPLETED"],
-      };
-      if (!validTransitions[existingBooking.status]?.includes(body.status)) {
-        return NextResponse.json(
-          {
-            error: `Invalid status transition from ${existingBooking.status} to ${body.status}`,
-            validTransitions: validTransitions[existingBooking.status],
-          },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Update booking (Supabase update requires `.update()` then `.eq()` then `.select()`)
-    const { data: updatedBooking, error: updateError } = await supabase
-      .from("Booking")
-      .update(body)
-      .eq("id", bookingId)
-      .select(`
-        *,
-        addOns: AddOn(*),
-        client: User!clientId(id, firstname, lastname, email),
-        photographer: User!photographerId(id, firstname, lastname, email)
-      `)
-      .single();
-
-    if (updateError || !updatedBooking) {
+    if (bookingError || !booking) {
       return NextResponse.json(
-        { error: "Failed to update booking", details: updateError?.message },
-        { status: 500 }
+        { error: "Booking not found" },
+        { status: 404, headers: corsHeaders }
       );
     }
 
-    return NextResponse.json(updatedBooking);
+    // Check authorization
+    if (user.role === "CLIENT" && booking.clientId !== user.id) {
+      return NextResponse.json(
+        { error: "Forbidden. You can only cancel your own bookings." },
+        { status: 403, headers: corsHeaders }
+      );
+    }
+
+    if (user.role === "PHOTOGRAPHER" && booking.photographerId !== user.id) {
+      return NextResponse.json(
+        { error: "Forbidden. You can only reject bookings assigned to you." },
+        { status: 403, headers: corsHeaders }
+      );
+    }
+
+    // Update booking status based on action
+    const newStatus = action === 'REJECT' ? 'PHOTOGRAPHER_REJECTED' : 'CANCELLED';
+
+    const { error: updateError } = await supabase
+      .from("Booking")
+      .update({
+        status: newStatus,
+        notes: reason || null
+      })
+      .eq("id", bookingId);
+
+    if (updateError) {
+      return NextResponse.json(
+        { error: "Failed to update booking", details: updateError.message },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+
+    // Add status history entry
+    const { error: historyError } = await supabase
+      .from("BookingStatusHistory")
+      .insert([
+        {
+          bookingId: bookingId,
+          status: newStatus,
+          userId: user.id,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ]);
+
+    if (historyError) {
+      console.error("Failed to add booking status history:", historyError);
+    }
+
+    return NextResponse.json(
+      {
+        message: action === 'REJECT' ? "Booking rejected successfully" : "Booking cancelled successfully",
+        status: newStatus
+      },
+      { headers: corsHeaders }
+    );
   } catch (error: unknown) {
     console.error("Error updating booking:", error);
     return NextResponse.json(
       { error: "Failed to update booking", details: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
-
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: "Unauthorized. Please login first." },
-        { status: 401 }
-      );
-    }
-
-    const userEmail = session.user.email;
-    const { data: user, error: userError } = await supabase
-      .from("User")
-      .select("*")
-      .eq("email", userEmail)
-      .single();
-
-    if (userError || !user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const { id } = await params;
-    const bookingId = id;
-
-    // Get existing booking
-    const { data: existingBooking, error: bookingError } = await supabase
-      .from("Booking")
-      .select("*")
-      .eq("id", bookingId)
-      .single();
-
-    if (bookingError || !existingBooking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-    }
-
-    // Check delete permissions
-    if (
-      (user.role === "CLIENT" &&
-        existingBooking.clientId === user.id &&
-        existingBooking.status === "BOOKING_CREATED") ||
-      user.role === "ADMIN"
-    ) {
-      // Delete booking and related add-ons (should cascade if FK ON DELETE CASCADE)
-      const { error: deleteError } = await supabase
-        .from("Booking")
-        .delete()
-        .eq("id", bookingId);
-
-      if (deleteError) {
-        return NextResponse.json(
-          { error: "Failed to delete booking", details: deleteError.message },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({ message: "Booking deleted successfully" });
-    } else {
-      return NextResponse.json(
-        { error: "You don't have permission to delete this booking" },
-        { status: 403 }
-      );
-    }
-  } catch (error: unknown) {
-    console.error("Error deleting booking:", error);
-    return NextResponse.json(
-      { error: "Failed to delete booking", details: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
-    );
-  }
-}
-
-
-
-
-
-
-/*
-// eslint-disable @typescript-eslint/no-explicit-any 
-// app/api/bookings/[id]/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { prisma } from "@/lib/prisma";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-
-  
-  try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: "Unauthorized. Please login first." },
-        { status: 401 }
-      );
-    }
-
-    const userEmail = session.user.email;
-    const user = await prisma.user.findUnique({
-      where: { email: userEmail as string },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const bookingId = params.id;
-
-    // Get the booking
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: {
-        addOns: true,
-        client: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
-          },
-        },
-        photographer: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
-          },
-        },
-      },
-    });
-
-    if (!booking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-    }
-
-    // Check permissions based on role
-    if (
-      user.role === "CLIENT" &&
-      booking.clientId !== user.id
-    ) {
-      return NextResponse.json(
-        { error: "You don't have permission to view this booking" },
-        { status: 403 }
-      );
-    }
-
-    if (
-      user.role === "PHOTOGRAPHER" &&
-      booking.photographerId !== user.id
-    ) {
-      return NextResponse.json(
-        { error: "You don't have permission to view this booking" },
-        { status: 403 }
-      );
-    }
-
-    return NextResponse.json(booking);
-  } catch (error: any) {
-    console.error("Error fetching booking:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch booking", details: error.message },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: "Unauthorized. Please login first." },
-        { status: 401 }
-      );
-    }
-
-    const userEmail = session.user.email;
-    const user = await prisma.user.findUnique({
-      where: { email: userEmail as string },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const bookingId = params.id;
-    const body = await req.json();
-
-    // Get the existing booking
-    const existingBooking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-    });
-
-    if (!existingBooking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-    }
-
-    // Validate permissions based on role and update scope
-    if (user.role === "CLIENT") {
-      // Clients can only modify their own bookings
-      if (existingBooking.clientId !== user.id) {
-        return NextResponse.json(
-          { error: "You don't have permission to update this booking" },
-          { status: 403 }
-        );
-      }
-
-      // Clients can only modify bookings that are not yet assigned
-      if (existingBooking.status !== "BOOKING_CREATED") {
-        return NextResponse.json(
-          { error: "Cannot modify booking after photographer assignment" },
-          { status: 403 }
-        );
-      }
-    } else if (user.role === "PHOTOGRAPHER") {
-      // Photographers can only update status for bookings assigned to them
-      if (existingBooking.photographerId !== user.id) {
-        return NextResponse.json(
-          { error: "You don't have permission to update this booking" },
-          { status: 403 }
-        );
-      }
-
-      // Photographers can only update the status
-      const allowedFields = ["status"];
-      const requestedFields = Object.keys(body);
-
-      if (!requestedFields.every(field => allowedFields.includes(field))) {
-        return NextResponse.json(
-          { error: "Photographers can only update the booking status" },
-          { status: 403 }
-        );
-      }
-    }
-
-    // Track if status is being updated to create history entry
-    const isStatusBeingUpdated = body.status && body.status !== existingBooking.status;
-    let statusNotes = "";
-
-    // Handle status updates
-    if (isStatusBeingUpdated) {
-      // Validate status transitions
-      const validTransitions: Record<string, string[]> = {
-        "BOOKING_CREATED": ["PHOTOGRAPHER_ASSIGNED"],
-        "PHOTOGRAPHER_ASSIGNED": ["SHOOTING"],
-        "SHOOTING": ["EDITING"],
-        "EDITING": ["COMPLETED"],
-      };
-
-      if (
-        !validTransitions[existingBooking.status]?.includes(body.status)
-      ) {
-        return NextResponse.json(
-          { 
-            error: `Invalid status transition from ${existingBooking.status} to ${body.status}`,
-            validTransitions: validTransitions[existingBooking.status]
-          },
-          { status: 400 }
-        );
-      }
-      
-      // Create appropriate notes based on the status change
-      switch(body.status) {
-        case "SHOOTING":
-          statusNotes = "Photographer has started the photoshoot";
-          break;
-        case "EDITING":
-          statusNotes = "Photoshoot completed, now in editing phase";
-          break;
-        case "COMPLETED":
-          statusNotes = "Editing completed, booking finalized";
-          break;
-        default:
-          statusNotes = `Status changed from ${existingBooking.status} to ${body.status}`;
-      }
-    }
-
-    // Use transaction if status is being updated to ensure both operations complete
-    if (isStatusBeingUpdated) {
-      const [updatedBooking, _] = await prisma.$transaction([
-        // 1. Update the booking
-        prisma.booking.update({
-          where: { id: bookingId },
-          data: body,
-          include: {
-            addOns: true,
-            client: {
-              select: {
-                id: true,
-                firstname: true,
-                lastname: true,
-                email: true,
-              },
-            },
-            photographer: {
-              select: {
-                id: true,
-                firstname: true,
-                lastname: true,
-                email: true,
-              },
-            },
-          },
-        }),
-        
-        // 2. Create booking status history entry
-        prisma.bookingStatusHistory.create({
-          data: {
-            bookingId,
-            userId: user.id, // Current user (admin or photographer) who made the change
-            status: body.status,
-            notes: statusNotes
-          }
-        })
-      ]);
-      
-      return NextResponse.json(updatedBooking);
-    } else {
-      // If no status change, just update the booking without creating history
-      const updatedBooking = await prisma.booking.update({
-        where: { id: bookingId },
-        data: body,
-        include: {
-          addOns: true,
-          client: {
-            select: {
-              id: true,
-              firstname: true,
-              lastname: true,
-              email: true,
-            },
-          },
-          photographer: {
-            select: {
-              id: true,
-              firstname: true,
-              lastname: true,
-              email: true,
-            },
-          },
-        },
-      });
-      
-      return NextResponse.json(updatedBooking);
-    }
-  } catch (error: any) {
-    console.error("Error updating booking:", error);
-    return NextResponse.json(
-      { error: "Failed to update booking", details: error.message },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: "Unauthorized. Please login first." },
-        { status: 401 }
-      );
-    }
-
-    const userEmail = session.user.email;
-    const user = await prisma.user.findUnique({
-      where: { email: userEmail as string },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const bookingId = params.id;
-
-    // Get the existing booking
-    const existingBooking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-    });
-
-    if (!existingBooking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-    }
-
-    // Only clients can delete their own bookings before assignment
-    // or admins can delete any booking
-    if (
-      (user.role === "CLIENT" && existingBooking.clientId === user.id && existingBooking.status === "BOOKING_CREATED") ||
-      user.role === "ADMIN"
-    ) {
-      // Delete booking and related add-ons
-      await prisma.booking.delete({
-        where: { id: bookingId },
-      });
-
-      return NextResponse.json({ message: "Booking deleted successfully" });
-    } else {
-      return NextResponse.json(
-        { error: "You don't have permission to delete this booking" },
-        { status: 403 }
-      );
-    }
-  } catch (error: any) {
-    console.error("Error deleting booking:", error);
-    return NextResponse.json(
-      { error: "Failed to delete booking", details: error.message },
-      { status: 500 }
-    );
-  }
-}
-*/
