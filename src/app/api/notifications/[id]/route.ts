@@ -4,18 +4,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import supabase from "@/lib/supabaseAdmin";
 import { authOptions } from "@/utils/authOptions";
+import { getCorsHeaders, handleCorsOptions } from "@/lib/cors";
+
+// OPTIONS handler for CORS preflight
+export async function OPTIONS(req: NextRequest) {
+  return handleCorsOptions(req);
+}
 
 // PATCH /api/notifications/[id] - Mark notification as read/unread
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const corsHeaders = getCorsHeaders(req);
+  
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
-        { status: 401 }
+        { status: 401, headers: corsHeaders }
       );
     }
 
@@ -27,17 +35,23 @@ export async function PATCH(
       .single();
 
     if (userError || !user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404, headers: corsHeaders }
+      );
     }
 
     const notificationId = (await params).id;
-    const { isRead } = await req.json();
-
-    if (typeof isRead !== "boolean") {
-      return NextResponse.json(
-        { error: "isRead must be a boolean value" },
-        { status: 400 }
-      );
+    
+    // Try to get isRead from body, default to true if not provided
+    let isRead = true;
+    try {
+      const body = await req.json();
+      if (body.isRead !== undefined && typeof body.isRead === "boolean") {
+        isRead = body.isRead;
+      }
+    } catch (e) {
+      // No body provided, use default isRead = true
     }
 
     // Get the notification
@@ -50,7 +64,7 @@ export async function PATCH(
     if (notificationError || !notification) {
       return NextResponse.json(
         { error: "Notification not found" },
-        { status: 404 }
+        { status: 404, headers: corsHeaders }
       );
     }
 
@@ -58,21 +72,28 @@ export async function PATCH(
     if (notification.userId !== user.id) {
       return NextResponse.json(
         { error: "You can only update your own notifications" },
-        { status: 403 }
+        { status: 403, headers: corsHeaders }
       );
     }
 
     // Update the notification
+    const updateData: any = {
+      isRead,
+      updatedAt: new Date().toISOString(),
+    };
+    
+    // Add readAt timestamp when marking as read
+    if (isRead && !notification.readAt) {
+      updateData.readAt = new Date().toISOString();
+    }
+    
     const { data: updatedNotification, error: updateError } = await supabase
       .from("Notification")
-      .update({
-        isRead,
-        updatedAt: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("id", notificationId)
       .select(`
         *,
-        booking:Booking (id, shortId, status)
+        booking:Booking!Notification_bookingId_fkey (id, shortId, status)
       `)
       .single();
 
@@ -80,12 +101,17 @@ export async function PATCH(
       throw new Error(`Failed to update notification: ${updateError.message}`);
     }
 
-    return NextResponse.json(updatedNotification);
+    return NextResponse.json({
+      success: true,
+      message: "Notification marked as read",
+      notification: updatedNotification
+    }, { headers: corsHeaders });
   } catch (error: any) {
     console.error("Error updating notification:", error);
+    const corsHeaders = getCorsHeaders(req);
     return NextResponse.json(
       { error: "Failed to update notification", details: error.message },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
@@ -95,12 +121,14 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const corsHeaders = getCorsHeaders(req);
+  
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized. Please login first." },
-        { status: 401 }
+        { status: 401, headers: corsHeaders }
       );
     }
 

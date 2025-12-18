@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
       .from("Notification")
       .select(`
         *,
-        booking:Booking (id, shortId, status)
+        booking:Booking!Notification_bookingId_fkey (id, shortId, status)
       `)
       .eq("userId", user.id)
       .order("createdAt", { ascending: false });
@@ -56,7 +56,33 @@ export async function GET(req: NextRequest) {
       throw new Error(`Failed to fetch notifications: ${notificationsError.message}`);
     }
 
-    return NextResponse.json(notifications || []);
+    // Get unread count
+    const { count: unreadCount, error: unreadError } = await supabase
+      .from("Notification")
+      .select("id", { count: "exact", head: true })
+      .eq("userId", user.id)
+      .eq("isRead", false);
+
+    if (unreadError) {
+      console.error("Error fetching unread count:", unreadError);
+    }
+
+    // Get total count
+    const { count: totalCount, error: totalError } = await supabase
+      .from("Notification")
+      .select("id", { count: "exact", head: true })
+      .eq("userId", user.id);
+
+    if (totalError) {
+      console.error("Error fetching total count:", totalError);
+    }
+
+    // Return in format expected by frontend
+    return NextResponse.json({
+      notifications: notifications || [],
+      unreadCount: unreadCount || 0,
+      totalCount: totalCount || 0
+    });
   } catch (error: any) {
     console.error("Error fetching notifications:", error);
     return NextResponse.json(
@@ -121,7 +147,7 @@ export async function POST(req: NextRequest) {
       })
       .select(`
         *,
-        booking:Booking (id, shortId, status)
+        booking:Booking!Notification_bookingId_fkey (id, shortId, status)
       `)
       .single();
 
