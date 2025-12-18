@@ -26,9 +26,6 @@
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "@prisma/client": [
-        "./generated/prisma-client/index"
       ]
     }
   },
