@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
       .from("Notification")
       .select(`
         *,
-        booking:Booking (id, shortId, status)
+        booking:Booking!Notification_bookingId_fkey (id, shortId, status)
       `)
       .eq("userId", user.id)
       .order("createdAt", { ascending: false });
@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
       })
       .select(`
         *,
-        booking:Booking (id, shortId, status)
+        booking:Booking!Notification_bookingId_fkey (id, shortId, status)
       `)
       .single();
 

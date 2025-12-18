@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { createClient } from "@supabase/supabase-js";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { notifyClientWorkCompleted } from "@/lib/notificationHelper";
 
 // Helper function to get CORS headers based on request origin
 function getCorsHeaders(request?: NextRequest) {
@@ -158,6 +159,22 @@ export async function PUT(
 
     if (updateError) {
       throw new Error(`Failed to update booking: ${updateError.message}`);
+    }
+
+    // Notify client when work is completed
+    if (status === "COMPLETED" && updatedBooking.client && updatedBooking.photographer) {
+      try {
+        const photographerName = `${updatedBooking.photographer.firstname} ${updatedBooking.photographer.lastname}`;
+        await notifyClientWorkCompleted(
+          bookingId,
+          updatedBooking.client.id,
+          photographerName,
+          updatedBooking.shortId || bookingId
+        );
+      } catch (notificationError) {
+        console.error("Failed to send work completion notification:", notificationError);
+        // Don't fail the status update if notification fails
+      }
     }
 
     return NextResponse.json({

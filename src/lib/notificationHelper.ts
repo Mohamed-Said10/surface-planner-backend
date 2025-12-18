@@ -10,7 +10,8 @@ export type NotificationType =
   | "STATUS_CHANGE"
   | "MESSAGE"
   | "PAYMENT"
-  | "BOOKING_CANCELLED";
+  | "BOOKING_CANCELLED"
+  | "WORK_COMPLETED";
 
 interface CreateNotificationParams {
   userId: string;
@@ -317,4 +318,23 @@ export async function notifyAdminsOfNewBooking(
       actionUrl: `/dash/admin/booking-details/${bookingId}`,
     });
   }
+}
+
+/**
+ * Helper to notify client when photographer completes work
+ */
+export async function notifyClientWorkCompleted(
+  bookingId: string,
+  clientId: string,
+  photographerName: string,
+  bookingReference: string
+) {
+  await createNotification({
+    userId: clientId,
+    bookingId,
+    type: "WORK_COMPLETED",
+    title: "Your Photos Are Ready! 🎉",
+    message: `${photographerName} has finished editing and uploaded all files for booking ${bookingReference}. Click to view and download your photos!`,
+    actionUrl: `/dash/client/booking-details/${bookingId}`,
+  });
 }
