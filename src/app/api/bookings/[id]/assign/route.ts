@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import supabase from "@/lib/supabaseAdmin";
 import { authOptions } from "@/utils/authOptions";
+import { notifyPhotographerAssigned } from "@/lib/notificationHelper";
 
 export async function POST(
   req: NextRequest,
@@ -115,6 +116,20 @@ export async function POST(
     if (historyError) {
       console.error("Failed to create history entry:", historyError);
       // Don't throw error here, booking is already updated
+    }
+
+    // Notify photographer and client of assignment
+    try {
+      await notifyPhotographerAssigned(
+        photographerId,
+        existingBooking.clientId,
+        bookingId,
+        existingBooking.shortId || bookingId.slice(0, 8),
+        `${photographer.firstname} ${photographer.lastname}`
+      );
+    } catch (notifError) {
+      console.error("Failed to send notifications:", notifError);
+      // Don't block assignment if notification fails
     }
 
     return NextResponse.json({

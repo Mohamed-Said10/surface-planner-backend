@@ -37,7 +37,10 @@ export async function GET(req: NextRequest) {
       throw new Error(`Failed to count unread notifications: ${countError.message}`);
     }
 
-    return NextResponse.json({ count: count || 0 });
+    return NextResponse.json({ 
+      success: true,
+      count: count || 0 
+    });
   } catch (error: any) {
     console.error("Error counting unread notifications:", error);
     return NextResponse.json(

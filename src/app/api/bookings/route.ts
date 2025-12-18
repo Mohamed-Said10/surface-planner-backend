@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { createClient } from "@supabase/supabase-js";
+import { notifyAdminsOfNewBooking } from "@/lib/notificationHelper";
 
 // Helper function to get CORS headers based on request origin
 function getCorsHeaders(request?: NextRequest) {
@@ -205,6 +206,18 @@ export async function POST(req: NextRequest) {
     if (historyError) {
       console.error("Failed to add booking status history:", historyError);
       // You might still allow the booking to proceed, or handle this as a critical error
+    }
+
+    // Notify all admins of new booking
+    try {
+      await notifyAdminsOfNewBooking(
+        booking.id,
+        `${firstName} ${lastName}`,
+        booking.shortId || booking.id.slice(0, 8)
+      );
+    } catch (notifError) {
+      console.error("Failed to send notifications:", notifError);
+      // Don't block booking creation if notification fails
     }
 
     return NextResponse.json(

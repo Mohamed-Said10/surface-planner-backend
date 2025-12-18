@@ -4,12 +4,13 @@ import supabase from "@/lib/supabaseAdmin";
 
 export type NotificationType =
   | "BOOKING_CREATED"
-  | "BOOKING_ASSIGNED"
+  | "PHOTOGRAPHER_ASSIGNED"
   | "PHOTOGRAPHER_ACCEPTED"
+  | "PHOTOGRAPHER_REJECTED"
   | "STATUS_CHANGE"
-  | "NEW_MESSAGE"
-  | "PAYMENT_RECEIVED"
-  | "BOOKING_COMPLETED";
+  | "MESSAGE"
+  | "PAYMENT"
+  | "BOOKING_CANCELLED";
 
 interface CreateNotificationParams {
   userId: string;
@@ -88,8 +89,8 @@ export async function notifyPhotographerAssigned(
   await createNotification({
     userId: photographerId,
     bookingId,
-    type: "BOOKING_ASSIGNED",
-    title: "New Booking Assigned",
+    type: "PHOTOGRAPHER_ASSIGNED",
+    title: "New Booking Assignment",
     message: `You have been assigned to booking ${bookingShortId}. Please review and accept.`,
     actionUrl: `/dash/photographer/booking-details/${bookingId}`,
   });
@@ -98,7 +99,7 @@ export async function notifyPhotographerAssigned(
   await createNotification({
     userId: clientId,
     bookingId,
-    type: "BOOKING_ASSIGNED",
+    type: "PHOTOGRAPHER_ASSIGNED",
     title: "Photographer Assigned",
     message: `${photographerName} has been assigned to your booking ${bookingShortId}.`,
     actionUrl: `/bookings/${bookingId}`,
@@ -183,7 +184,7 @@ export async function notifyPaymentReceived(
   await createNotification({
     userId: clientId,
     bookingId,
-    type: "PAYMENT_RECEIVED",
+    type: "PAYMENT",
     title: "Payment Confirmed",
     message: `Your payment of $${amount} for booking ${bookingShortId} has been received.`,
     actionUrl: `/bookings/${bookingId}`,
@@ -194,10 +195,126 @@ export async function notifyPaymentReceived(
     await createNotification({
       userId: photographerId,
       bookingId,
-      type: "PAYMENT_RECEIVED",
+      type: "PAYMENT",
       title: "Booking Payment Received",
       message: `Payment of $${amount} received for booking ${bookingShortId}.`,
       actionUrl: `/dash/photographer/booking-details/${bookingId}`,
+    });
+  }
+}
+
+/**
+ * Create notification for photographer rejection
+ */
+export async function notifyPhotographerRejected(
+  bookingId: string,
+  photographerName: string,
+  bookingShortId: string
+) {
+  // Get all admins
+  const { data: admins, error } = await supabase
+    .from("User")
+    .select("id")
+    .eq("role", "ADMIN");
+
+  if (error || !admins) {
+    console.error("Error fetching admins:", error);
+    return;
+  }
+
+  // Notify all admins
+  for (const admin of admins) {
+    await createNotification({
+      userId: admin.id,
+      bookingId,
+      type: "PHOTOGRAPHER_REJECTED",
+      title: "Photographer Declined Booking",
+      message: `${photographerName} has declined booking ${bookingShortId}. Please assign another photographer.`,
+      actionUrl: `/dash/admin/booking-details/${bookingId}`,
+    });
+  }
+}
+
+/**
+ * Create notification for booking cancellation
+ */
+export async function notifyBookingCancelled(
+  bookingId: string,
+  bookingShortId: string,
+  clientId: string,
+  photographerId: string | null,
+  reason?: string
+) {
+  const message = `Booking ${bookingShortId} has been cancelled${reason ? `: ${reason}` : ""}.`;
+
+  // Notify client
+  await createNotification({
+    userId: clientId,
+    bookingId,
+    type: "BOOKING_CANCELLED",
+    title: "Booking Cancelled",
+    message,
+    actionUrl: `/bookings/${bookingId}`,
+  });
+
+  // Notify photographer if assigned
+  if (photographerId) {
+    await createNotification({
+      userId: photographerId,
+      bookingId,
+      type: "BOOKING_CANCELLED",
+      title: "Booking Cancelled",
+      message,
+      actionUrl: `/dash/photographer/booking-details/${bookingId}`,
+    });
+  }
+
+  // Notify admins
+  const { data: admins } = await supabase
+    .from("User")
+    .select("id")
+    .eq("role", "ADMIN");
+
+  if (admins) {
+    for (const admin of admins) {
+      await createNotification({
+        userId: admin.id,
+        bookingId,
+        type: "BOOKING_CANCELLED",
+        title: "Booking Cancelled",
+        message,
+        actionUrl: `/dash/admin/booking-details/${bookingId}`,
+      });
+    }
+  }
+}
+
+/**
+ * Helper to notify all admins of a new booking
+ */
+export async function notifyAdminsOfNewBooking(
+  bookingId: string,
+  clientName: string,
+  bookingReference: string
+) {
+  const { data: admins, error } = await supabase
+    .from("User")
+    .select("id")
+    .eq("role", "ADMIN");
+
+  if (error || !admins) {
+    console.error("Error fetching admins:", error);
+    return;
+  }
+
+  for (const admin of admins) {
+    await createNotification({
+      userId: admin.id,
+      bookingId,
+      type: "BOOKING_CREATED",
+      title: "New Booking Request",
+      message: `${clientName} has created a new booking (${bookingReference}). Please review and assign a photographer.`,
+      actionUrl: `/dash/admin/booking-details/${bookingId}`,
     });
   }
 }

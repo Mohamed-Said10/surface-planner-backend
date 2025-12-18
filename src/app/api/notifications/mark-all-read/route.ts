@@ -43,8 +43,9 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({
+      success: true,
       message: "All notifications marked as read",
-      count: updatedNotifications?.length || 0,
+      updatedCount: updatedNotifications?.length || 0,
     });
   } catch (error: any) {
     console.error("Error marking notifications as read:", error);
@@ -54,3 +55,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// PATCH method (same as POST for compatibility with frontend)
+export const PATCH = POST;

@@ -80,7 +80,11 @@ export async function PATCH(
       throw new Error(`Failed to update notification: ${updateError.message}`);
     }
 
-    return NextResponse.json(updatedNotification);
+    return NextResponse.json({
+      success: true,
+      message: "Notification marked as read",
+      notification: updatedNotification
+    });
   } catch (error: any) {
     console.error("Error updating notification:", error);
     return NextResponse.json(
