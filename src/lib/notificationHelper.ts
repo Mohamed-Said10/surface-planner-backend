@@ -25,6 +25,10 @@ interface CreateNotificationParams {
 /**
  * Helper function to create notifications
  * This can be called from various endpoints to create notifications automatically
+ * 
+ * NOTE: All notifications created through this function will automatically
+ * trigger real-time SSE updates to connected clients via /api/notifications/stream
+ * No additional action required - Supabase real-time handles the event broadcasting
  */
 export async function createNotification(params: CreateNotificationParams) {
   try {
