@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
     let channelRef: ReturnType<typeof supabase.channel> | null = null;
     let heartbeatInterval: NodeJS.Timeout | null = null;
     let isCleaningUp = false;
+    const sentNotificationIds = new Set<string>();
 
     const stream = new ReadableStream({
       start(controller) {
@@ -58,6 +59,11 @@ export async function GET(req: NextRequest) {
               filter: `userId=eq.${userId}`,
             },
             (payload) => {
+              const notificationId = payload.new.id;
+              if (sentNotificationIds.has(notificationId)) {
+                return;
+              }
+              sentNotificationIds.add(notificationId);
               const message = `event: notification\ndata: ${JSON.stringify(payload.new)}\n\n`;
               controller.enqueue(encoder.encode(message));
             }
